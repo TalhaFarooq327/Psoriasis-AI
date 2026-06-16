@@ -1,0 +1,136 @@
+/* ================================
+   FORM INPUT COMPONENT STYLES
+   ================================ */
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+/* ── Label ── */
+.form-label {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #2D3748;
+  letter-spacing: 0.1px;
+}
+
+/* ── Input Wrapper ── */
+.form-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Icon ── */
+.form-input-icon {
+  position: absolute;
+  left: 14px;
+  display: flex;
+  align-items: center;
+  color: #A0AEC0;
+  pointer-events: none;
+  transition: color 0.2s;
+  z-index: 1;
+}
+
+/* ── Suffix (toggle button etc.) ── */
+.form-input-suffix {
+  position: absolute;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  z-index: 1;
+}
+
+/* ── Input ── */
+.form-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  background: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 12px;
+  font-size: 14.5px;
+  color: #1A202C;
+  font-family: 'Inter', system-ui, sans-serif;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  outline: none;
+  appearance: none;
+}
+
+.form-input::placeholder {
+  color: #CBD5E0;
+  font-weight: 400;
+}
+
+.form-input--with-icon {
+  padding-left: 44px;
+}
+
+.form-input--with-suffix {
+  padding-right: 44px;
+}
+
+/* Focus */
+.form-input:focus {
+  border-color: #3182CE;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+  background: #FAFBFF;
+}
+
+.form-input:focus+.form-input-suffix .input-toggle-btn,
+.form-field:focus-within .form-input-icon {
+  color: #3182CE;
+}
+
+/* Hover */
+.form-input:hover:not(:focus) {
+  border-color: #CBD5E0;
+  background: #FAFAFA;
+}
+
+/* Error state */
+.form-field--error .form-input {
+  border-color: #FC8181;
+  background: #FFF5F5;
+  box-shadow: 0 0 0 3px rgba(252, 129, 129, 0.12);
+}
+
+.form-field--error .form-input:focus {
+  border-color: #E53E3E;
+  box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.15);
+}
+
+.form-field--error .form-label {
+  color: #C53030;
+}
+
+.form-field--error .form-input-icon {
+  color: #FC8181;
+}
+
+/* ── Error Message ── */
+.form-error-msg {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: #E53E3E;
+  font-weight: 500;
+  margin: 0;
+  animation: errorSlide 0.2s ease forwards;
+}
+
+@keyframes errorSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

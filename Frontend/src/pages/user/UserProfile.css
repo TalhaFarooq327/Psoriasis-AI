@@ -1,0 +1,229 @@
+/* ═══════════════════════════════════════
+   USER PROFILE STYLES
+   ═══════════════════════════════════════ */
+
+.uprof {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 700px;
+}
+
+/* ── Profile Card ── */
+.uprof__card {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: linear-gradient(135deg, rgba(49,130,206,0.1), rgba(11,197,234,0.06));
+  border: 1px solid rgba(49,130,206,0.2);
+  border-radius: 20px;
+  padding: 32px;
+  animation: dashFadeUp 0.4s ease both;
+}
+
+.uprof__avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.uprof__avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  font-size: 24px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 1;
+}
+
+.uprof__avatar-glow {
+  position: absolute;
+  inset: -4px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  opacity: 0.25;
+  filter: blur(8px);
+  z-index: 0;
+}
+
+.uprof__name {
+  font-size: 22px;
+  font-weight: 800;
+  color: white;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  letter-spacing: -0.3px;
+}
+
+.uprof__email {
+  font-size: 14px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 3px;
+}
+
+.uprof__badges {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.uprof__badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.uprof__badge--blue {
+  background: rgba(49,130,206,0.12);
+  color: #63B3ED;
+  border: 1px solid rgba(49,130,206,0.2);
+}
+
+.uprof__badge--green {
+  background: rgba(56,161,105,0.12);
+  color: #68D391;
+  border: 1px solid rgba(56,161,105,0.2);
+}
+
+/* ── Section ── */
+.uprof__section {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 18px;
+  padding: 28px;
+  animation: dashFadeUp 0.4s 0.1s ease both;
+}
+
+.uprof__section-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+}
+
+.uprof__section-title svg { color: #63B3ED; }
+
+/* ── Fields ── */
+.uprof__fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.uprof__field { display: flex; flex-direction: column; gap: 6px; }
+
+.uprof__label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+}
+
+.uprof__input-wrap {
+  position: relative;
+}
+
+.uprof__input {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.8);
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.uprof__input:focus {
+  border-color: rgba(49,130,206,0.4);
+}
+
+.uprof__input[readonly] {
+  cursor: default;
+  opacity: 0.7;
+}
+
+/* ── Note ── */
+.uprof__note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 12px 14px;
+  background: rgba(49,130,206,0.06);
+  border: 1px solid rgba(49,130,206,0.15);
+  border-radius: 10px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+}
+
+.uprof__note svg { color: #63B3ED; flex-shrink: 0; }
+
+/* ── Security ── */
+.uprof__security-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.uprof__security-row:last-child { border-bottom: none; }
+
+.uprof__security-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
+  display: block;
+}
+
+.uprof__security-value {
+  font-size: 13px;
+  color: rgba(255,255,255,0.4);
+  display: block;
+  margin-top: 2px;
+}
+
+.uprof__security-btn {
+  padding: 8px 18px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #63B3ED;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.uprof__security-btn:hover {
+  background: rgba(49,130,206,0.12);
+  border-color: rgba(49,130,206,0.3);
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .uprof__card {
+    flex-direction: column;
+    text-align: center;
+  }
+  .uprof__badges { justify-content: center; }
+  .uprof__fields { grid-template-columns: 1fr; }
+  .uprof__security-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+}

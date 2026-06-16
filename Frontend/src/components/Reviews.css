@@ -1,0 +1,228 @@
+/* ===== REVIEWS ===== */
+
+.reviews {
+  padding: 100px 0 80px;
+  background: var(--bg-light);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background */
+.reviews__bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.reviews__bg-blob {
+  position: absolute;
+  width: 800px; height: 600px;
+  background: radial-gradient(ellipse, rgba(49,130,206,0.06), transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Header */
+.reviews__header {
+  text-align: center;
+  max-width: 640px;
+  margin: 0 auto 56px;
+  position: relative;
+  z-index: 2;
+}
+
+.reviews__header .section-subtitle {
+  margin: 0 auto 24px;
+}
+
+.reviews__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 10px 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.reviews__summary-score {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-dark);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.reviews__summary-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+}
+
+.review__stars {
+  display: flex;
+  gap: 2px;
+}
+
+.reviews__summary-text {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ── Infinite marquee ── */
+.reviews__marquee-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  /* let it breathe a bit */
+  padding: 12px 0 24px;
+}
+
+/* Fade-out edges */
+.reviews__fade {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 120px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.reviews__fade--left {
+  left: 0;
+  background: linear-gradient(to right, var(--bg-light), transparent);
+}
+
+.reviews__fade--right {
+  right: 0;
+  background: linear-gradient(to left, var(--bg-light), transparent);
+}
+
+/* The scrolling track */
+.reviews__marquee-track {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+  animation: marqueeScroll 35s linear infinite;
+}
+
+/* Pause on hover */
+.reviews__marquee-wrapper:hover .reviews__marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marqueeScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ── Review card ── */
+.reviews__card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 26px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+  /* Fixed width for consistent card size in the row */
+  width: 300px;
+  flex-shrink: 0;
+  transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+  cursor: default;
+}
+
+.reviews__card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(49,130,206,0.03), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.reviews__card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(49,130,206,0.15);
+}
+
+.reviews__card:hover::after {
+  opacity: 1;
+}
+
+.reviews__card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.reviews__avatar {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.reviews__user {
+  flex: 1;
+  min-width: 0;
+}
+
+.reviews__name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reviews__role {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.reviews__quote-icon {
+  flex-shrink: 0;
+}
+
+.reviews__text {
+  font-size: 13px;
+  color: var(--text-body);
+  line-height: 1.7;
+  font-style: italic;
+  flex: 1;
+  /* clamp to 4 lines so all cards are uniform height */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.reviews__verified {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #38A169;
+  font-weight: 600;
+}
+
+/* Responsive: slow down slightly on smaller screens */
+@media (max-width: 768px) {
+  .reviews { padding: 72px 0 60px; }
+  .reviews__marquee-track { animation-duration: 25s; }
+  .reviews__card { width: 260px; }
+}

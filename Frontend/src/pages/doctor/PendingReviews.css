@@ -1,0 +1,137 @@
+/* ═══════════════════════════════════════
+   PENDING REVIEWS STYLES
+   ═══════════════════════════════════════ */
+
+.dpend { display: flex; flex-direction: column; gap: 24px; }
+
+.dpend__header {
+  display: flex; align-items: center; justify-content: space-between;
+  animation: dashFadeUp 0.4s ease both;
+}
+
+.dpend__title {
+  font-size: 24px; font-weight: 800; color: white;
+  font-family: 'Plus Jakarta Sans','Inter',sans-serif; letter-spacing: -0.5px;
+}
+.dpend__subtitle { font-size: 14px; color: rgba(255,255,255,0.45); margin-top: 4px; }
+
+.dpend__count {
+  padding: 6px 16px; border-radius: 999px; font-size: 13px; font-weight: 600;
+  background: rgba(234,179,8,0.12); color: #FCD34D; border: 1px solid rgba(234,179,8,0.2);
+}
+
+/* ── Grid ── */
+.dpend__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+  animation: dashFadeUp 0.4s 0.1s ease both;
+}
+
+.dpend__card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 18px;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.dpend__card:hover {
+  border-color: rgba(234,179,8,0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+}
+
+/* Image placeholder */
+.dpend__card-image {
+  height: 140px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.04));
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dpend__card-image-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255,255,255,0.2);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.dpend__card-body { padding: 20px; }
+
+/* Patient info */
+.dpend__card-patient {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.dpend__card-avatar {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: linear-gradient(135deg, rgba(234,179,8,0.2), rgba(249,115,22,0.15));
+  border: 1px solid rgba(234,179,8,0.3); color: #FCD34D; font-size: 13px;
+  font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+.dpend__card-name { font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.9); }
+.dpend__card-id { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 1px; }
+
+/* Details */
+.dpend__card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.dpend__card-detail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dpend__card-detail-label {
+  font-size: 12px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.5px; color: rgba(255,255,255,0.35);
+}
+
+.dpend__card-detail-value {
+  font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.8);
+}
+
+.dpend__card-detail-value--red { color: #FCA5A5; }
+
+/* Button */
+.dpend__card-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(49,130,206,0.15), rgba(11,197,234,0.1));
+  border: 1px solid rgba(49,130,206,0.25);
+  color: #63B3ED;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.dpend__card-btn:hover {
+  background: linear-gradient(135deg, rgba(49,130,206,0.25), rgba(11,197,234,0.15));
+  transform: translateY(-1px);
+  color: white;
+}
+
+@media (max-width: 640px) {
+  .dpend__grid { grid-template-columns: 1fr; }
+  .dpend__header { flex-direction: column; align-items: flex-start; gap: 10px; }
+}

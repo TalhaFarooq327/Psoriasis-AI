@@ -1,0 +1,329 @@
+/* ═══════════════════════════════════════
+   DOCTOR REVIEWS (USER SIDE) STYLES
+   ═══════════════════════════════════════ */
+
+.drev {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ── Header ── */
+.drev__header { animation: dashFadeUp 0.4s ease both; }
+
+.drev__title {
+  font-size: 24px;
+  font-weight: 800;
+  color: white;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  letter-spacing: -0.5px;
+}
+
+.drev__subtitle {
+  font-size: 14px;
+  color: rgba(255,255,255,0.45);
+  margin-top: 4px;
+}
+
+/* ── Stats ── */
+.drev__stats {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 18px 24px;
+  animation: dashFadeUp 0.4s 0.05s ease both;
+}
+
+.drev__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.drev__stat-num {
+  font-size: 22px;
+  font-weight: 800;
+  color: white;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+}
+
+.drev__stat-num--yellow { color: #FCD34D; }
+.drev__stat-num--green  { color: #68D391; }
+
+.drev__stat-label {
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  font-weight: 500;
+}
+
+.drev__stat-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255,255,255,0.08);
+}
+
+/* ── Tabs ── */
+.drev__tabs {
+  display: flex;
+  gap: 4px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 4px;
+  animation: dashFadeUp 0.4s 0.1s ease both;
+}
+
+.drev__tab {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.drev__tab:hover { color: rgba(255,255,255,0.8); }
+
+.drev__tab--active {
+  background: linear-gradient(135deg, rgba(49,130,206,0.15), rgba(11,197,234,0.1));
+  color: #63B3ED;
+}
+
+.drev__tab-badge {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: rgba(234,179,8,0.25);
+  color: #FCD34D;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Card list ── */
+.drev__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: dashFadeUp 0.4s 0.15s ease both;
+}
+
+.drev__card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.drev__card:hover {
+  border-color: rgba(255,255,255,0.1);
+}
+
+.drev__card--pending { border-left: 3px solid rgba(234,179,8,0.5); }
+.drev__card--reviewed { border-left: 3px solid rgba(56,161,105,0.5); }
+
+.drev__card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.drev__card-header:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+.drev__card-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.drev__card-info { flex: 1; min-width: 0; }
+
+.drev__card-pred {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+}
+
+.drev__card-meta {
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 3px;
+}
+
+.drev__card-chevron {
+  color: rgba(255,255,255,0.35);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.drev__card-chevron--open {
+  transform: rotate(180deg);
+}
+
+/* ── Badges ── */
+.drev__badge {
+  display: inline-flex;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.drev__badge--yellow {
+  background: rgba(234,179,8,0.12);
+  color: #FCD34D;
+  border: 1px solid rgba(234,179,8,0.2);
+}
+
+.drev__badge--green {
+  background: rgba(56,161,105,0.12);
+  color: #68D391;
+  border: 1px solid rgba(56,161,105,0.2);
+}
+
+/* ── Card body ── */
+.drev__card-body {
+  padding: 0 20px 20px;
+  animation: dashFadeUp 0.3s ease both;
+}
+
+.drev__card-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  margin-bottom: 18px;
+}
+
+.drev__detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.drev__detail {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.drev__detail-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+}
+
+.drev__detail-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+}
+
+/* ── Doctor Response ── */
+.drev__response {
+  background: rgba(56,161,105,0.05);
+  border: 1px solid rgba(56,161,105,0.15);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.drev__response-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #68D391;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+}
+
+.drev__response-title svg { color: #68D391; }
+
+.drev__response-date {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.35);
+  margin-left: auto;
+}
+
+.drev__response-section {
+  margin-bottom: 14px;
+}
+
+.drev__response-section:last-child { margin-bottom: 0; }
+
+.drev__response-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 6px;
+}
+
+.drev__response-text {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.7;
+}
+
+/* ── Pending message ── */
+.drev__pending-msg {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: rgba(234,179,8,0.06);
+  border: 1px solid rgba(234,179,8,0.15);
+  border-radius: 10px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.5;
+}
+
+.drev__pending-msg svg { color: #FCD34D; flex-shrink: 0; }
+
+/* ── Empty ── */
+.drev__empty {
+  text-align: center;
+  padding: 48px 24px;
+  color: rgba(255,255,255,0.35);
+}
+
+.drev__empty-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .drev__stats { flex-wrap: wrap; gap: 16px; }
+  .drev__stat-divider { display: none; }
+  .drev__card-header { flex-wrap: wrap; }
+  .drev__detail-grid { grid-template-columns: 1fr; }
+}

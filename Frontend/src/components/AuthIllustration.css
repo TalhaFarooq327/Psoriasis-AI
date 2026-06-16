@@ -1,0 +1,62 @@
+/* ================================
+   AUTH ILLUSTRATION STYLES
+   ================================ */
+
+.auth-illustration-wrap {
+  width: 100%;
+  max-width: 300px;
+  animation: illFloat 5s ease-in-out infinite;
+}
+
+.auth-illustration-wrap--register {
+  max-width: 280px;
+}
+
+.auth-illustration {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 12px 32px rgba(0,0,0,0.25));
+}
+
+/* Scan line pulse animation */
+.ill-scanline {
+  animation: scanMove 2.4s ease-in-out infinite;
+}
+
+@keyframes scanMove {
+  0%, 100% { transform: translateY(-24px); opacity: 0.3; }
+  50%       { transform: translateY(24px);  opacity: 1;   }
+}
+
+/* Orbiting dots */
+.ill-dot {
+  animation: orbitPulse 2s ease-in-out infinite;
+}
+.ill-dot--0 { animation-delay: 0s;    }
+.ill-dot--1 { animation-delay: 0.33s; }
+.ill-dot--2 { animation-delay: 0.66s; }
+.ill-dot--3 { animation-delay: 1s;    }
+.ill-dot--4 { animation-delay: 1.33s; }
+.ill-dot--5 { animation-delay: 1.66s; }
+
+@keyframes orbitPulse {
+  0%, 100% { opacity: 0.55; transform: scale(1);    }
+  50%       { opacity: 1;    transform: scale(1.35); }
+}
+
+/* Shield bob */
+.ill-shield {
+  animation: shieldBob 3.5s ease-in-out infinite;
+  transform-origin: 160px 100px;
+}
+
+@keyframes shieldBob {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+/* Float wrapper */
+@keyframes illFloat {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}

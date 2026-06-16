@@ -1,0 +1,11 @@
+/* ===== APP ===== */
+
+.app {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Smooth scroll offset for sticky nav */
+section[id] {
+  scroll-margin-top: 72px;
+}

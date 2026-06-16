@@ -1,0 +1,251 @@
+/* ═══════════════════════════════════════════
+   REVIEW HISTORY — Doctor Page
+   ═══════════════════════════════════════════ */
+
+.drhist {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Header ── */
+.drhist__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.drhist__title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--color-text-primary, #1a202c);
+  margin: 0 0 4px;
+}
+
+.drhist__subtitle {
+  font-size: 14px;
+  color: var(--color-text-muted, #64748b);
+  margin: 0;
+}
+
+.drhist__count {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #059669;
+  white-space: nowrap;
+}
+
+/* ── Search ── */
+.drhist__search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 16px;
+  color: #94a3b8;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.drhist__search-bar:focus-within {
+  border-color: #3182ce;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+  color: #3182ce;
+}
+
+.drhist__search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: #1a202c;
+  width: 100%;
+  font-family: inherit;
+}
+
+.drhist__search-input::placeholder {
+  color: #94a3b8;
+}
+
+/* ── List ── */
+.drhist__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Card ── */
+.drhist__card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.drhist__card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+}
+
+/* ── Card left ── */
+.drhist__card-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.drhist__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.drhist__name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a202c;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.drhist__meta {
+  font-size: 12.5px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* ── Card center ── */
+.drhist__card-center {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 180px;
+}
+
+.drhist__conf {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.drhist__conf-bar {
+  flex: 1;
+  background: #f1f5f9;
+  border-radius: 999px;
+  height: 6px;
+  overflow: hidden;
+}
+
+.drhist__conf-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #10b981, #059669);
+}
+
+/* ── Card right ── */
+.drhist__card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.drhist__review-date {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* ── Badges ── */
+.drhist__badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.drhist__badge--green {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.drhist__badge--red {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.drhist__badge--outline {
+  border: 1px solid #bbf7d0;
+}
+
+/* ── Empty state ── */
+.drhist__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 20px;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+}
+
+.drhist__empty-icon {
+  font-size: 40px;
+  opacity: 0.5;
+}
+
+.drhist__empty p {
+  color: #94a3b8;
+  font-size: 14.5px;
+  margin: 0;
+}
+
+/* ── Footer ── */
+.drhist__footer {
+  font-size: 13px;
+  color: #94a3b8;
+  text-align: center;
+  padding: 8px 0;
+}
+
+@media (max-width: 700px) {
+  .drhist__card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .drhist__card-right {
+    align-items: flex-start;
+  }
+  .drhist__card-center {
+    min-width: unset;
+    width: 100%;
+  }
+}

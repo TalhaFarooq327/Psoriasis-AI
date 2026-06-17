@@ -1,16 +1,19 @@
-# Python
+# Python cache
 __pycache__/
 *.pyc
 
-# Virtual Environment
+# Virtual environments
 .venv/
 venv/
 env/
-.env/
 
-# TensorFlow Models
+# Models
 *.keras
 *.h5
+
+# Environment variables (IMPORTANT)
+.env
+*.env
 
 # VS Code
 .vscode/

@@ -25,7 +25,7 @@ const getStrength = (pw) => {
 
 const Register = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { signUp } = useAuth();
 
   const [role, setRole]           = useState('user'); // 'user' | 'doctor'
   const [formData, setFormData]   = useState({
@@ -94,42 +94,27 @@ const Register = () => {
     setLoading(true);
     setApiError('');
 
-    /* TODO: replace with real Flask/Supabase API call
-       const res = await fetch('/api/auth/register', {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify({
-           role,
-           full_name: formData.fullName,
-           email:     formData.email,
-           password:  formData.password,
-           ...(role === 'doctor' && {
-             specialization: formData.specialization,
-             license_no:     formData.licenseNo,
-             hospital:       formData.hospital,
-           })
-         }),
-       });
-       const data = await res.json();
-       if (!res.ok) { setApiError(data.message); setLoading(false); return; }
-    */
+    try {
+      const additionalMetadata = role === 'doctor' ? {
+        specialization: formData.specialization,
+        license_no:     formData.licenseNo,
+        hospital:       formData.hospital,
+      } : {};
 
-    await new Promise(r => setTimeout(r, 1800)); // simulate network
-    setLoading(false);
-    setSuccess(true);
-
-    const customData = role === 'doctor' ? {
-      name: formData.fullName,
-      email: formData.email,
-      specialization: formData.specialization,
-      licenseNo: formData.licenseNo,
-      hospital: formData.hospital,
-    } : {
-      name: formData.fullName,
-      email: formData.email,
-    };
-    login(role, customData); // auto-login after registration
-    setTimeout(() => navigate(role === 'doctor' ? '/doctor/dashboard' : '/dashboard'), 2800);
+      await signUp(
+        formData.email,
+        formData.password,
+        formData.fullName,
+        role,
+        additionalMetadata
+      );
+      setLoading(false);
+      setSuccess(true);
+      setTimeout(() => navigate(role === 'doctor' ? '/doctor/dashboard' : '/dashboard'), 2800);
+    } catch (err) {
+      setApiError(err.message || 'Registration failed. Please try again.');
+      setLoading(false);
+    }
   };
 
   /* ─── Success Screen ─── */

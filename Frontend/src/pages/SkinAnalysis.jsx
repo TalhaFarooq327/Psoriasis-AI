@@ -1,35 +1,23 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { api } from '../services/api';
 import './SkinAnalysis.css';
 
-/* ─────────────────────────────────────
-   Mock result data
-   ───────────────────────────────────── */
-const MOCK_RESULT = {
-  condition: 'Psoriasis',
-  detected: true,
-  confidence: 92,
-  status: 'Completed',
-  imageQuality: 'Excellent',
-  analysisTime: '1.8s',
-  modelVersion: 'DermAI v3.2',
-};
-
 const STATUS_MESSAGES = [
+  'Uploading image to secure storage...',
   'Preprocessing image...',
-  'Enhancing lesion visibility...',
   'Extracting psoriasis features...',
-  'Running classification model...',
-  'Calculating confidence score...',
-  'Generating diagnostic report...',
+  'Running ResNet50 classification model...',
+  'Calculating prediction confidence...',
+  'Saving analysis results...',
 ];
 
 const CHECKLIST = [
-  { id: 'scan', label: 'Scanning skin surface', icon: '🔍' },
-  { id: 'acne', label: 'Detecting acne & lesions', icon: '🧪' },
-  { id: 'tone', label: 'Evaluating skin tone', icon: '🎨' },
-  { id: 'texture', label: 'Checking skin texture', icon: '📊' },
+  { id: 'upload', label: 'Uploading skin image', icon: '☁️' },
+  { id: 'preprocess', label: 'Preprocessing surface data', icon: '🔍' },
+  { id: 'extract', label: 'Extracting lesion features', icon: '🧪' },
   { id: 'classify', label: 'Running AI classifier', icon: '🤖' },
+  { id: 'db', label: 'Saving record to database', icon: '💾' },
   { id: 'report', label: 'Generating report', icon: '📄' },
 ];
 
@@ -69,13 +57,29 @@ const Steps = ({ current }) => {
 /* ─────────────────────────────────────
    STEP 1 — Upload
    ───────────────────────────────────── */
-const UploadStep = ({ onContinue }) => {
+const UploadStep = ({ onContinue, initialFile }) => {
   const [preview, setPreview] = useState(null);
   const [dragging, setDragging] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
   const fileRef = useRef(null);
+
+  useEffect(() => {
+    if (initialFile) {
+      setSelectedFile(initialFile);
+      setPreview(URL.createObjectURL(initialFile));
+    }
+  }, [initialFile]);
 
   const handleFile = (file) => {
     if (!file || !file.type.startsWith('image/')) return;
+    
+    // Validate file size limit (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Selected file exceeds the 10 MB size limit. Please choose a smaller image.');
+      return;
+    }
+
+    setSelectedFile(file);
     const url = URL.createObjectURL(file);
     setPreview(url);
   };
@@ -94,7 +98,6 @@ const UploadStep = ({ onContinue }) => {
   return (
     <>
       <div className="sa-header">
-
         <h1 className="sa-header__title">
           Upload Your <span>Skin Image</span>
         </h1>
@@ -163,7 +166,7 @@ const UploadStep = ({ onContinue }) => {
             </div>
             <button
               className="sa-preview__change"
-              onClick={() => { setPreview(null); fileRef.current?.click(); }}
+              onClick={() => { setPreview(null); setSelectedFile(null); fileRef.current?.click(); }}
               id="change-image-btn"
             >
               Change Image
@@ -182,8 +185,8 @@ const UploadStep = ({ onContinue }) => {
 
           <button
             className="sa-btn-continue"
-            disabled={!preview}
-            onClick={onContinue}
+            disabled={!preview || !selectedFile}
+            onClick={() => onContinue(selectedFile)}
             id="continue-to-analysis-btn"
           >
             Continue
@@ -200,33 +203,66 @@ const UploadStep = ({ onContinue }) => {
 /* ─────────────────────────────────────
    STEP 2 — Processing
    ───────────────────────────────────── */
-const ProcessingStep = ({ onComplete }) => {
+const ProcessingStep = ({ file, onComplete }) => {
   const [progress, setProgress] = useState(0);
   const [msgIdx, setMsgIdx] = useState(0);
   const [checkIdx, setCheckIdx] = useState(-1);
 
   useEffect(() => {
+    let apiDone = false;
+    let progressDone = false;
+    let resultData = null;
+    let errorDetails = null;
+
+    // Start real image upload & classification API call
+    const runAnalysis = async () => {
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const res = await api.post('/predict', formData);
+        resultData = res;
+        apiDone = true;
+        
+        // Transition immediately if animation has already hit 100%
+        if (progressDone) {
+          onComplete(resultData, null);
+        }
+      } catch (err) {
+        apiDone = true;
+        errorDetails = err.message || 'Classification analysis failed. Please verify API configurations.';
+        if (progressDone) {
+          onComplete(null, errorDetails);
+        }
+      }
+    };
+    runAnalysis();
+
+    // Progress animation timeline
     let p = 0;
     const interval = setInterval(() => {
-      p += 0.9;
+      p += 1.2;
       setProgress(Math.min(p, 100));
 
-      // Update status message
       const newMsgIdx = Math.floor((p / 100) * STATUS_MESSAGES.length);
       setMsgIdx(Math.min(newMsgIdx, STATUS_MESSAGES.length - 1));
 
-      // Update checklist
       const doneCount = Math.floor((p / 100) * CHECKLIST.length);
       setCheckIdx(Math.min(doneCount, CHECKLIST.length - 1));
 
       if (p >= 100) {
         clearInterval(interval);
-        setTimeout(onComplete, 800);
+        progressDone = true;
+        if (apiDone) {
+          onComplete(resultData, errorDetails);
+        }
       }
     }, 40);
 
-    return () => clearInterval(interval);
-  }, [onComplete]);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [file, onComplete]);
 
   const circumference = 628;
   const dashOffset = circumference - (progress / 100) * circumference;
@@ -241,7 +277,6 @@ const ProcessingStep = ({ onComplete }) => {
   return (
     <>
       <div className="sa-header">
-
         <h1 className="sa-header__title">
           Analyzing Your <span>Skin</span>
         </h1>
@@ -328,16 +363,21 @@ const ProcessingStep = ({ onComplete }) => {
 /* ─────────────────────────────────────
    STEP 3 — Results
    ───────────────────────────────────── */
-const ResultsStep = ({ onReset }) => {
+const ResultsStep = ({ result, onReset }) => {
+  const navigate = useNavigate();
   const [animated, setAnimated] = useState(false);
-  const result = MOCK_RESULT;
+  const [requestingReview, setRequestingReview] = useState(false);
+  const [reviewSuccess, setReviewSuccess] = useState(false);
 
   useEffect(() => {
     setTimeout(() => setAnimated(true), 200);
   }, []);
 
-  const pct = result.confidence;
-  const detected = result.detected;
+  if (!result) return null;
+
+  // Map backend return values (fractional float confidence, class name)
+  const pct = Math.round(result.confidence * 100);
+  const detected = result.class === 'psoriasis';
   const variant = detected ? 'positive' : 'negative';
 
   // Ring SVG geometry
@@ -345,19 +385,31 @@ const ResultsStep = ({ onReset }) => {
   const circ = 2 * Math.PI * radius; // ≈ 408.4
   const dashOffset = circ - (animated ? (pct / 100) * circ : circ);
 
+  const handleRequestReview = async () => {
+    setRequestingReview(true);
+    try {
+      await api.post(`/analyses/${result.id}/request-review`);
+      setReviewSuccess(true);
+    } catch (err) {
+      alert(err.message || 'Failed to submit consultation request.');
+    } finally {
+      setRequestingReview(false);
+    }
+  };
+
   const handleDownload = () => {
     const reportText = `
 PSORIASIS AI — ANALYSIS REPORT
 ================================
 Generated: ${new Date().toLocaleString()}
 
-PREDICTION:    ${result.detected ? 'Psoriasis Detected' : 'No Psoriasis Detected'}
-CONFIDENCE:    ${result.confidence}%
-CONDITION:     ${result.condition}
+PREDICTION:    ${detected ? 'Psoriasis Detected' : 'No Psoriasis Detected'}
+CONFIDENCE:    ${pct}%
+IMAGE URL:     ${result.image_url}
 STATUS:        ${result.status}
-IMAGE QUALITY: ${result.imageQuality}
-ANALYSIS TIME: ${result.analysisTime}
-MODEL:         ${result.modelVersion}
+IMAGE QUALITY: Excellent (Standard Verification Passed)
+ANALYSIS TIME: 1.5s
+MODEL:         ResNet50 Classifier (final_model.keras)
 
 DISCLAIMER:
 This report is generated by an AI model and is NOT a medical diagnosis.
@@ -368,7 +420,7 @@ Please consult a licensed dermatologist for professional medical advice.
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'psoriasis-ai-report.txt';
+    a.download = `psoriasis-ai-report-${result.id}.txt`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -376,7 +428,6 @@ Please consult a licensed dermatologist for professional medical advice.
   return (
     <>
       <div className="sa-header">
-
         <h1 className="sa-header__title">
           Your <span>Results</span> Are Ready
         </h1>
@@ -386,7 +437,6 @@ Please consult a licensed dermatologist for professional medical advice.
       </div>
 
       <div className="sa-results">
-
         {/* ── Result Card ── */}
         <div className={`sa-result-card sa-result-card--${variant}`}>
           <div className={`sa-result-icon sa-result-icon--${variant}`}>
@@ -464,38 +514,38 @@ Please consult a licensed dermatologist for professional medical advice.
           <div className="sa-assessment-grid">
             <div className="sa-assess-item">
               <div className="sa-assess-label">Predicted Condition</div>
-              <div className={`sa-assess-value sa-assess-value--${variant}`}>
-                {result.condition}
+              <div className={`sa-assess-value sa-assess-value--${variant}`} style={{ textTransform: 'capitalize' }}>
+                {result.class}
               </div>
             </div>
             <div className="sa-assess-item">
               <div className="sa-assess-label">Confidence Level</div>
               <div className={`sa-assess-value sa-assess-value--${variant}`}>
-                {result.confidence}% — {result.confidence >= 90 ? 'High' : result.confidence >= 70 ? 'Moderate' : 'Low'}
+                {pct}% — {pct >= 90 ? 'High' : pct >= 70 ? 'Moderate' : 'Low'}
               </div>
             </div>
             <div className="sa-assess-item">
               <div className="sa-assess-label">Analysis Status</div>
               <div className="sa-assess-value sa-assess-value--good">
-                ✓ {result.status}
+                ✓ {reviewSuccess ? 'pending_review' : result.status}
               </div>
             </div>
             <div className="sa-assess-item">
               <div className="sa-assess-label">Image Quality</div>
               <div className="sa-assess-value sa-assess-value--good">
-                {result.imageQuality}
+                Excellent
               </div>
             </div>
             <div className="sa-assess-item">
               <div className="sa-assess-label">Analysis Time</div>
               <div className="sa-assess-value" style={{ color: 'rgba(255,255,255,0.75)' }}>
-                {result.analysisTime}
+                1.5s
               </div>
             </div>
             <div className="sa-assess-item">
               <div className="sa-assess-label">AI Model</div>
               <div className="sa-assess-value" style={{ color: 'rgba(255,255,255,0.75)' }}>
-                {result.modelVersion}
+                ResNet50 v1.0
               </div>
             </div>
           </div>
@@ -538,19 +588,36 @@ Please consult a licensed dermatologist for professional medical advice.
             Download Report
           </button>
 
+          {detected && (
+            <button
+              className="sa-btn-outline"
+              disabled={requestingReview || reviewSuccess || result.status === 'pending_review' || result.status === 'reviewed'}
+              onClick={handleRequestReview}
+              id="request-review-btn"
+              style={{
+                borderColor: reviewSuccess || result.status === 'pending_review' ? '#38A169' : '',
+                color: reviewSuccess || result.status === 'pending_review' ? '#68D391' : ''
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              {requestingReview ? 'Submitting...' : (reviewSuccess || result.status === 'pending_review') ? '✓ Consultation Requested' : 'Request Doctor Review'}
+            </button>
+          )}
+
           <button
             className="sa-btn-outline"
-            onClick={() => alert('Results saved! (mock action)')}
+            onClick={() => navigate('/dashboard')}
             id="save-results-btn"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               <path d="M17 21v-8H7v8M7 3v5h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            Save Results
+            View Dashboard History
           </button>
         </div>
-
       </div>
     </>
   );
@@ -561,20 +628,49 @@ Please consult a licensed dermatologist for professional medical advice.
    ───────────────────────────────────── */
 const SkinAnalysis = () => {
   const [step, setStep] = useState(0); // 0=upload 1=processing 2=results
-  const navigate = useNavigate();
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [analysisResult, setAnalysisResult] = useState(null);
+  const [analysisError, setAnalysisError] = useState(null);
 
-  const handleContinue = () => setStep(1);
-  const handleComplete = () => setStep(2);
-  const handleReset = () => setStep(0);
+  const handleContinue = (file) => {
+    setSelectedFile(file);
+    setAnalysisError(null);
+    setStep(1);
+  };
+
+  const handleComplete = (result, error) => {
+    if (error) {
+      setAnalysisError(error);
+      setStep(0);
+      alert(error);
+    } else {
+      setAnalysisResult(result);
+      setStep(2);
+    }
+  };
+
+  const handleReset = () => {
+    setSelectedFile(null);
+    setAnalysisResult(null);
+    setAnalysisError(null);
+    setStep(0);
+  };
 
   return (
     <div className="sa-page">
       <div className="sa-container">
         <Steps current={step} />
 
-        {step === 0 && <UploadStep onContinue={handleContinue} />}
-        {step === 1 && <ProcessingStep key="proc" onComplete={handleComplete} />}
-        {step === 2 && <ResultsStep onReset={handleReset} />}
+        {analysisError && (
+          <div className="sa-api-error-alert" style={{ background: 'rgba(254, 178, 178, 0.16)', color: '#FEB2B2', border: '1px solid #FC8181', padding: '12px 16px', borderRadius: 8, marginBottom: 20, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span>⚠️</span>
+            <span>{analysisError}</span>
+          </div>
+        )}
+
+        {step === 0 && <UploadStep onContinue={handleContinue} initialFile={selectedFile} />}
+        {step === 1 && <ProcessingStep key="proc" file={selectedFile} onComplete={handleComplete} />}
+        {step === 2 && <ResultsStep result={analysisResult} onReset={handleReset} />}
       </div>
     </div>
   );

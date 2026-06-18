@@ -1,39 +1,55 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { api } from '../../services/api';
 import DashboardLayout from '../../components/DashboardLayout';
-import { MOCK_STATS_DOCTOR, MOCK_PENDING_REVIEWS, MOCK_PATIENTS } from '../../data/mockData';
+import AnimatedNumber from '../../components/AnimatedNumber';
 import './DoctorDashboard.css';
 
 /* ── Doctor Sidebar menu ── */
 const DOCTOR_MENU = [
   { label: 'Dashboard',       path: '/doctor/dashboard',        icon: '📊' },
   { label: 'Patients',        path: '/doctor/patients',         icon: '👥' },
-  { label: 'Pending Reviews', path: '/doctor/pending-reviews',  icon: '📋', badge: 5 },
+  { label: 'Pending Reviews', path: '/doctor/pending-reviews',  icon: '📋' },
   { label: 'Review History',  path: '/doctor/review-history',   icon: '✅' },
   { label: 'Profile',         path: '/doctor/profile',          icon: '👤' },
 ];
 
-/* ── Animated counter ── */
-const AnimatedNumber = ({ value, duration = 1200 }) => {
-  const [display, setDisplay] = useState(0);
-  useEffect(() => {
-    let start = 0;
-    const step = value / (duration / 16);
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= value) { setDisplay(value); clearInterval(timer); }
-      else setDisplay(Math.floor(start));
-    }, 16);
-    return () => clearInterval(timer);
-  }, [value, duration]);
-  return <span>{display}</span>;
-};
-
 const DoctorDashboard = () => {
   const { user } = useAuth();
-  const stats = MOCK_STATS_DOCTOR;
-  const recentPending = MOCK_PENDING_REVIEWS.slice(0, 3);
+  const [pendingReviews, setPendingReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadDoctorData = async () => {
+      try {
+        const data = await api.get('/doctor/pending-reviews');
+        setPendingReviews(data);
+      } catch (err) {
+        console.error("Error loading doctor pending reviews:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadDoctorData();
+  }, []);
+
+  const totalPatients = new Set(pendingReviews.map(r => r.patient_email)).size;
+  const pendingCount = pendingReviews.length;
+  // Completed reviews can be calculated or mocked as 0 / database counts
+  const completedReviews = 0;
+
+  const recentPending = pendingReviews.slice(0, 3);
+
+  if (loading) {
+    return (
+      <DashboardLayout menuItems={DOCTOR_MENU} title="Doctor Dashboard">
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', color: 'rgba(255,255,255,0.6)' }}>
+          <div style={{ fontSize: '1.2rem' }}>Loading doctor dashboard...</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout menuItems={DOCTOR_MENU} title="Doctor Dashboard">
@@ -48,13 +64,13 @@ const DoctorDashboard = () => {
               Medical Professional
             </div>
             <h2 className="ddash__welcome-title">
-              Welcome, <span>{user?.name}</span>
+              Welcome, <span>Dr. {user?.full_name?.split(' ').slice(-1)[0] || user?.full_name || 'Doctor'}</span>
             </h2>
             <p className="ddash__welcome-desc">
-              {user?.specialization} · {user?.hospital || 'Hospital'}
+              {user?.specialization || 'Dermatology'} · {user?.hospital || 'Partner Hospital'}
             </p>
             <p className="ddash__welcome-sub">
-              You have <strong>{stats.pendingReviews} pending reviews</strong> waiting for your assessment.
+              You have <strong>{pendingCount} pending reviews</strong> waiting for your assessment.
             </p>
           </div>
           <div className="ddash__welcome-visual">
@@ -73,8 +89,8 @@ const DoctorDashboard = () => {
               </svg>
             </div>
             <div>
-              <div className="ddash__stat-value"><AnimatedNumber value={stats.totalPatients} /></div>
-              <div className="ddash__stat-label">Total Patients</div>
+              <div className="ddash__stat-value"><AnimatedNumber value={totalPatients} /></div>
+              <div className="ddash__stat-label">Active Patients Queue</div>
             </div>
           </div>
 
@@ -86,7 +102,7 @@ const DoctorDashboard = () => {
               </svg>
             </div>
             <div>
-              <div className="ddash__stat-value"><AnimatedNumber value={stats.pendingReviews} /></div>
+              <div className="ddash__stat-value"><AnimatedNumber value={pendingCount} /></div>
               <div className="ddash__stat-label">Pending Reviews</div>
             </div>
           </div>
@@ -99,8 +115,8 @@ const DoctorDashboard = () => {
               </svg>
             </div>
             <div>
-              <div className="ddash__stat-value"><AnimatedNumber value={stats.completedReviews} /></div>
-              <div className="ddash__stat-label">Completed Reviews</div>
+              <div className="ddash__stat-value"><AnimatedNumber value={completedReviews} /></div>
+              <div className="ddash__stat-label">Session Reviews</div>
             </div>
           </div>
         </div>
@@ -116,32 +132,45 @@ const DoctorDashboard = () => {
               Recent Pending Reviews
             </h3>
             <Link to="/doctor/pending-reviews" className="ddash__section-link">
-              View All ({MOCK_PENDING_REVIEWS.length}) →
+              View All ({pendingCount}) →
             </Link>
           </div>
 
           <div className="ddash__review-list">
-            {recentPending.map(r => (
-              <div key={r.id} className="ddash__review-card">
-                <div className="ddash__review-avatar">
-                  {r.patientName.split(' ').map(w => w[0]).join('').toUpperCase()}
-                </div>
-                <div className="ddash__review-info">
-                  <div className="ddash__review-name">{r.patientName}</div>
-                  <div className="ddash__review-meta">
-                    {r.prediction} · {r.confidence}% confidence
-                  </div>
-                </div>
-                <div className="ddash__review-right">
-                  <span className="ddash__review-date">
-                    {new Date(r.dateSubmitted).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                  </span>
-                  <Link to={`/doctor/review/${r.id}`} className="ddash__review-btn">
-                    Review
-                  </Link>
-                </div>
+            {recentPending.length === 0 ? (
+              <div style={{ padding: '24px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                No pending reviews found. Outstanding tasks are clear!
               </div>
-            ))}
+            ) : (
+              recentPending.map(r => {
+                const initials = r.patient_name
+                  ? r.patient_name.split(' ').map(w => w[0]).join('').toUpperCase()
+                  : 'P';
+                const confidencePct = Math.round(r.result_confidence * 100);
+                return (
+                  <div key={r.id} className="ddash__review-card">
+                    <div className="ddash__review-avatar">
+                      {initials}
+                    </div>
+                    <div className="ddash__review-info">
+                      <div className="ddash__review-name">{r.patient_name}</div>
+                      <div className="ddash__review-meta" style={{ textTransform: 'capitalize' }}>
+                        {r.result_label} · {confidencePct}% confidence
+                      </div>
+                    </div>
+                    <div className="ddash__review-right">
+                      <span className="ddash__review-date">
+                        {new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      </span>
+                      {/* Navigate to the detail view of the specific analysis */}
+                      <Link to={`/doctor/review/${r.id}`} className="ddash__review-btn">
+                        Review
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
 

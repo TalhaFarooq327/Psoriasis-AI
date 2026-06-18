@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { api } from '../../services/api';
 import DashboardLayout from '../../components/DashboardLayout';
-import { MOCK_STATS_USER, MOCK_ANALYSES, MOCK_CONSULTATIONS } from '../../data/mockData';
+import AnimatedNumber from '../../components/AnimatedNumber';
 import './UserDashboard.css';
 
 /* ── Sidebar menu items ── */
@@ -10,33 +11,48 @@ const USER_MENU = [
   { label: 'Dashboard',      path: '/dashboard',          icon: '📊' },
   { label: 'Analysis History',path: '/dashboard/history',  icon: '🕐' },
   { label: 'New Analysis',   path: '/analyze',            icon: '🔬' },
-  { label: 'Doctor Reviews', path: '/dashboard/reviews',  icon: '👨‍⚕️', badge: 2 },
+  { label: 'Doctor Reviews', path: '/dashboard/reviews',  icon: '👨‍⚕️' },
   { label: 'Profile',        path: '/dashboard/profile',  icon: '👤' },
 ];
 
-/* ── Animated counter ── */
-const AnimatedNumber = ({ value, duration = 1200 }) => {
-  const [display, setDisplay] = useState(0);
-  useEffect(() => {
-    let start = 0;
-    const step = value / (duration / 16);
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= value) { setDisplay(value); clearInterval(timer); }
-      else setDisplay(Math.floor(start));
-    }, 16);
-    return () => clearInterval(timer);
-  }, [value, duration]);
-  return <span>{display}</span>;
-};
-
 const UserDashboard = () => {
   const { user } = useAuth();
-  const stats = MOCK_STATS_USER;
-  const recentAnalyses = MOCK_ANALYSES.slice(0, 3);
-  const pendingConsults = MOCK_CONSULTATIONS.filter(c => c.status === 'Pending Review');
+  const [analyses, setAnalyses] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const firstName = user?.name?.split(' ')[0] || 'User';
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await api.get('/analyses');
+        setAnalyses(data);
+      } catch (err) {
+        console.error("Error loading dashboard data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
+
+  const firstName = user?.full_name?.split(' ')[0] || 'User';
+
+  // Compute stats dynamically from the actual DB data
+  const totalAnalyses = analyses.length;
+  const consultationsRequested = analyses.filter(a => a.status === 'pending_review' || a.status === 'reviewed').length;
+  const reviewsCompleted = analyses.filter(a => a.status === 'reviewed').length;
+
+  const recentAnalyses = analyses.slice(0, 3);
+  const pendingConsults = analyses.filter(a => a.status === 'pending_review');
+
+  if (loading) {
+    return (
+      <DashboardLayout menuItems={USER_MENU} title="Dashboard">
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', color: 'rgba(255,255,255,0.6)' }}>
+          <div style={{ fontSize: '1.2rem' }}>Loading dashboard data...</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout menuItems={USER_MENU} title="Dashboard">
@@ -71,7 +87,7 @@ const UserDashboard = () => {
               </svg>
             </div>
             <div className="udash__stat-info">
-              <div className="udash__stat-value"><AnimatedNumber value={stats.totalAnalyses} /></div>
+              <div className="udash__stat-value"><AnimatedNumber value={totalAnalyses} /></div>
               <div className="udash__stat-label">Total Analyses</div>
             </div>
           </div>
@@ -85,7 +101,7 @@ const UserDashboard = () => {
               </svg>
             </div>
             <div className="udash__stat-info">
-              <div className="udash__stat-value"><AnimatedNumber value={stats.consultationsRequested} /></div>
+              <div className="udash__stat-value"><AnimatedNumber value={consultationsRequested} /></div>
               <div className="udash__stat-label">Doctor Consultations</div>
             </div>
           </div>
@@ -97,8 +113,8 @@ const UserDashboard = () => {
               </svg>
             </div>
             <div className="udash__stat-info">
-              <div className="udash__stat-value"><AnimatedNumber value={stats.reportsDownloaded} /></div>
-              <div className="udash__stat-label">Reports Downloaded</div>
+              <div className="udash__stat-value"><AnimatedNumber value={reviewsCompleted} /></div>
+              <div className="udash__stat-label">Reviews Completed</div>
             </div>
           </div>
         </div>
@@ -119,37 +135,53 @@ const UserDashboard = () => {
           </div>
 
           <div className="udash__table-wrap">
-            <table className="udash__table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Prediction</th>
-                  <th>Confidence</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentAnalyses.map(a => (
-                  <tr key={a.id}>
-                    <td className="udash__table-date">{new Date(a.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
-                    <td>
-                      <span className={`udash__badge ${a.prediction.includes('No') ? 'udash__badge--green' : 'udash__badge--red'}`}>
-                        {a.prediction}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="udash__conf">
-                        <div className="udash__conf-bar">
-                          <div className="udash__conf-fill" style={{ width: `${a.confidence}%` }} />
-                        </div>
-                        <span>{a.confidence}%</span>
-                      </div>
-                    </td>
-                    <td><span className="udash__badge udash__badge--blue">{a.status}</span></td>
+            {recentAnalyses.length === 0 ? (
+              <div style={{ padding: '24px', textAlign: 'center', color: 'rgba(255,255,255,0.4)' }}>
+                No analysis history found. Start a new analysis to see results here!
+              </div>
+            ) : (
+              <table className="udash__table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Prediction</th>
+                    <th>Confidence</th>
+                    <th>Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {recentAnalyses.map(a => {
+                    const confidencePct = Math.round(a.result_confidence * 100);
+                    const isHealthy = a.result_label.toLowerCase().includes('normal');
+                    return (
+                      <tr key={a.id}>
+                        <td className="udash__table-date">
+                          {new Date(a.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </td>
+                        <td>
+                          <span className={`udash__badge ${isHealthy ? 'udash__badge--green' : 'udash__badge--red'}`} style={{ textTransform: 'capitalize' }}>
+                            {a.result_label}
+                          </span>
+                        </td>
+                        <td>
+                          <div className="udash__conf">
+                            <div className="udash__conf-bar">
+                              <div className="udash__conf-fill" style={{ width: `${confidencePct}%` }} />
+                            </div>
+                            <span>{confidencePct}%</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span className={`udash__badge ${a.status === 'reviewed' ? 'udash__badge--green' : a.status === 'pending_review' ? 'udash__badge--yellow' : 'udash__badge--blue'}`}>
+                            {a.status}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
 
@@ -170,18 +202,23 @@ const UserDashboard = () => {
             </div>
 
             <div className="udash__consult-list">
-              {pendingConsults.map(c => (
-                <div key={c.id} className="udash__consult-card">
-                  <div className="udash__consult-icon">⏳</div>
-                  <div className="udash__consult-info">
-                    <div className="udash__consult-pred">{c.prediction}</div>
-                    <div className="udash__consult-meta">
-                      Confidence: {c.confidence}% · Submitted {new Date(c.dateSubmitted).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              {pendingConsults.map(a => {
+                const confidencePct = Math.round(a.result_confidence * 100);
+                return (
+                  <div key={a.id} className="udash__consult-card">
+                    <div className="udash__consult-icon">⏳</div>
+                    <div className="udash__consult-info">
+                      <div className="udash__consult-pred" style={{ textTransform: 'capitalize', color: 'white', fontWeight: 500 }}>
+                        {a.result_label}
+                      </div>
+                      <div className="udash__consult-meta">
+                        Confidence: {confidencePct}% · Submitted {new Date(a.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      </div>
                     </div>
+                    <span className="udash__badge udash__badge--yellow">{a.status}</span>
                   </div>
-                  <span className="udash__badge udash__badge--yellow">{c.status}</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

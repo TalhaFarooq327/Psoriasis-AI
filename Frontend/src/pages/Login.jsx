@@ -41,20 +41,15 @@ const Login = () => {
     setLoading(true);
     setApiError('');
 
-    /* TODO: replace with real Flask API call
-       const res = await fetch('/api/auth/login', {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify({ email: formData.email, password: formData.password, remember }),
-       });
-       const data = await res.json();
-       if (!res.ok) { setApiError(data.message); setLoading(false); return; }
-    */
-
-    await new Promise(r => setTimeout(r, 1000)); // simulate network
-    login(role); // set mock user in AuthContext
-    setLoading(false);
-    navigate(role === 'doctor' ? '/doctor/dashboard' : '/dashboard');
+    try {
+      const loggedInUser = await login(formData.email, formData.password);
+      const userRole = loggedInUser?.role || role; // fallback to selected tab if role not found
+      setLoading(false);
+      navigate(userRole === 'doctor' ? '/doctor/dashboard' : '/dashboard');
+    } catch (err) {
+      setApiError(err.message || 'Invalid email or password.');
+      setLoading(false);
+    }
   };
 
   return (

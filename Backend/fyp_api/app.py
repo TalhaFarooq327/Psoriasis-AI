@@ -1,28 +1,90 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
-import numpy as np
+from fastapi import FastAPI, File, UploadFile, HTTPException, Depends, status
+from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
+from contextlib import asynccontextmanager
+from pathlib import Path
+from dotenv import load_dotenv
+from pydantic import BaseModel
 from PIL import Image, UnidentifiedImageError
+from supabase import create_client, Client
+import numpy as np
 import io
+import os
+import uuid
+
+# Import custom database & security modules
+from database import get_db
+from auth import get_current_user, require_doctor
+import models
+
+# Load environment variables
+load_dotenv()
+
+# Setup paths
+BASE_DIR = Path(__file__).resolve().parent
+MODEL_PATH = BASE_DIR / "model" / "resnet50_final_model.keras"
+
+# Supabase Client Setup (for file storage)
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
+
+supabase_client: Client = None
+if SUPABASE_URL and SUPABASE_ANON_KEY:
+    try:
+        supabase_client = create_client(SUPABASE_URL, SUPABASE_ANON_KEY)
+        print("Supabase client initialized successfully")
+    except Exception as e:
+        print(f"Error initializing Supabase client: {e}")
 
 try:
     import tensorflow as tf
 except ModuleNotFoundError:
     tf = None
 
-app = FastAPI()
-
 model = None
+CLASS_NAMES = ["normal skin", "psoriasis"]
 
-CLASS_NAMES = ["normal skin", "psorasis"]
-
-@app.on_event("startup")
-def load_model():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup Sequence
     global model
-    if tf is None:
-        print("TensorFlow is not installed. Install it only when you are ready to load a .keras model.")
-        return
+    
+    # 1. Automatically create database tables if they do not exist
+    try:
+        from database import Base, engine
+        Base.metadata.create_all(bind=engine)
+        print("Database tables verified/created successfully.")
+    except Exception as e:
+        print(f"Error initializing database tables on startup: {e}")
 
-    model = tf.keras.models.load_model("fyp_api/model/resnet50_final_model.keras")
-    print("Model loaded successfully")
+    # 2. Load the ResNet50 classification model
+    if tf is None:
+        print("TensorFlow is not installed. Skipping model load.")
+    else:
+        try:
+            if MODEL_PATH.exists():
+                model = tf.keras.models.load_model(str(MODEL_PATH))
+                print("TensorFlow model loaded successfully")
+            else:
+                print(f"Warning: Model file not found at {MODEL_PATH}")
+        except Exception as e:
+            print(f"Error loading model: {e}")
+
+    yield
+    # Shutdown Sequence (cleanup if necessary)
+    pass
+
+# Initialize FastAPI App with modern Lifespan Context Manager
+app = FastAPI(title="Psoriasis AI API", lifespan=lifespan)
+
+# Enable CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # Allow local Vite client requests. Can restrict in production.
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def preprocess_image(image_bytes):
     try:
@@ -40,27 +102,227 @@ def preprocess_image(image_bytes):
     except (UnidentifiedImageError, OSError, ValueError) as exc:
         raise HTTPException(status_code=400, detail="Uploaded file is not a valid image.") from exc
 
+# Pydantic schemas for request validation
+class ReviewSubmissionSchema(BaseModel):
+    feedback: str
+
+# ══════════════════════════════════════════════════════════════════════
+# API ENDPOINTS
+# ══════════════════════════════════════════════════════════════════════
+
 @app.post("/predict")
-async def predict(file: UploadFile = File(...)):
+async def predict(
+    file: UploadFile = File(...),
+    current_user: models.Profile = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Validates user, uploads skin image to Supabase storage,
+    runs the classification model, and records the analysis entry in database.
+    """
+    if not supabase_client:
+        raise HTTPException(
+            status_code=500,
+            detail="Supabase client is not configured. Verify URL and anon key."
+        )
+
+    if model is None:
+        raise HTTPException(status_code=503, detail="AI Classification model is not loaded yet")
+
     try:
+        # Validate mime type
+        if not file.content_type.startswith("image/"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Uploaded file must be a valid image."
+            )
+
+        # Read file contents and validate size (10MB)
         image_bytes = await file.read()
+        if len(image_bytes) > 10 * 1024 * 1024:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="File size exceeds the 10 MB limit."
+            )
+        
+        # 1. Preprocess & Predict
         processed = preprocess_image(image_bytes)
-
-        if model is None:
-            raise HTTPException(status_code=503, detail="Model not loaded yet")
-
         prediction = model.predict(processed, verbose=0)
         score = float(prediction[0][0])
 
         class_index = 1 if score >= 0.5 else 0
         confidence = score if class_index == 1 else 1 - score
 
+        # 2. Upload to Supabase Storage Bucket ('skin-images')
+        file_ext = file.filename.split(".")[-1] if "." in file.filename else "jpg"
+        file_path = f"{current_user.id}/{uuid.uuid4()}.{file_ext}"
+
+        try:
+            # Upload raw image bytes directly to Supabase storage
+            supabase_client.storage.from_("skin-images").upload(
+                path=file_path,
+                file=image_bytes,
+                file_options={"content-type": file.content_type or "image/jpeg"}
+            )
+            # Fetch the public URI
+            public_url = supabase_client.storage.from_("skin-images").get_public_url(file_path)
+        except Exception as e:
+            print(f"Supabase Storage Upload failed: {e}")
+            raise HTTPException(
+                status_code=502,
+                detail="Failed to upload skin image to storage. Make sure 'skin-images' bucket is created in Supabase."
+            )
+
+        # 3. Log results to public.analyses table in database
+        db_analysis = models.Analysis(
+            user_id=current_user.id,
+            image_url=public_url,
+            result_label=CLASS_NAMES[class_index],
+            result_confidence=float(confidence),
+            status="completed"
+        )
+        db.add(db_analysis)
+        db.commit()
+        db.refresh(db_analysis)
+
         return {
-            "class": CLASS_NAMES[class_index],
-            "confidence": float(confidence),
-            "raw_score": float(score)
+            "id": db_analysis.id,
+            "class": db_analysis.result_label,
+            "confidence": db_analysis.result_confidence,
+            "image_url": db_analysis.image_url,
+            "status": db_analysis.status,
+            "created_at": db_analysis.created_at
         }
     except HTTPException:
         raise
     except Exception as exc:
-        raise HTTPException(status_code=500, detail="Prediction failed.") from exc
+        print(f"Prediction flow error: {exc}")
+        raise HTTPException(status_code=500, detail="Prediction flow failed.") from exc
+
+@app.get("/analyses")
+def get_analyses(
+    current_user: models.Profile = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Fetch complete analysis history for the current logged-in patient.
+    """
+    analyses = db.query(models.Analysis).filter(
+        models.Analysis.user_id == current_user.id
+    ).order_by(models.Analysis.created_at.desc()).all()
+    return analyses
+
+@app.get("/analyses/{analysis_id}")
+def get_analysis_detail(
+    analysis_id: int,
+    current_user: models.Profile = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieve details of a single analysis. Restricted to patient owner or doctor.
+    """
+    analysis = db.query(models.Analysis).filter(models.Analysis.id == analysis_id).first()
+    if not analysis:
+        raise HTTPException(status_code=404, detail="Analysis record not found")
+        
+    if analysis.user_id != current_user.id and current_user.role != "doctor":
+        raise HTTPException(status_code=403, detail="Unauthorized to view this analysis record")
+        
+    reviews = db.query(models.DoctorReview).filter(models.DoctorReview.analysis_id == analysis_id).all()
+    
+    return {
+        "analysis": {
+            "id": analysis.id,
+            "user_id": analysis.user_id,
+            "image_url": analysis.image_url,
+            "result_label": analysis.result_label,
+            "result_confidence": analysis.result_confidence,
+            "status": analysis.status,
+            "created_at": analysis.created_at,
+            "patient_name": analysis.patient.full_name if analysis.patient else "Unknown Patient",
+            "patient_email": analysis.patient.email if analysis.patient else "No Email"
+        },
+        "reviews": reviews
+    }
+
+@app.post("/analyses/{analysis_id}/request-review")
+def request_review(
+    analysis_id: int,
+    current_user: models.Profile = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Flags an analysis record as 'pending_review' so doctors can see it in their queue.
+    """
+    analysis = db.query(models.Analysis).filter(
+        models.Analysis.id == analysis_id,
+        models.Analysis.user_id == current_user.id
+    ).first()
+    
+    if not analysis:
+        raise HTTPException(status_code=404, detail="Analysis record not found")
+        
+    analysis.status = "pending_review"
+    db.commit()
+    db.refresh(analysis)
+    return {
+        "id": analysis.id,
+        "status": analysis.status
+    }
+
+@app.get("/doctor/pending-reviews")
+def get_pending_reviews(
+    current_doctor: models.Profile = Depends(require_doctor),
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieve all analyses currently flagged for doctor review. Accessible by doctors only.
+    """
+    pending = db.query(models.Analysis).filter(
+        models.Analysis.status == "pending_review"
+    ).order_by(models.Analysis.created_at.desc()).all()
+    
+    results = []
+    for analysis in pending:
+        results.append({
+            "id": analysis.id,
+            "image_url": analysis.image_url,
+            "result_label": analysis.result_label,
+            "result_confidence": analysis.result_confidence,
+            "created_at": analysis.created_at,
+            "status": analysis.status,
+            "patient_name": analysis.patient.full_name if analysis.patient else "Unknown Patient",
+            "patient_email": analysis.patient.email if analysis.patient else "No Email"
+        })
+    return results
+
+@app.put("/doctor/reviews/{analysis_id}")
+def submit_review(
+    analysis_id: int,
+    review_data: ReviewSubmissionSchema,
+    current_doctor: models.Profile = Depends(require_doctor),
+    db: Session = Depends(get_db)
+):
+    """
+    Submit doctor comments/feedback and transition analysis status to 'reviewed'.
+    """
+    analysis = db.query(models.Analysis).filter(models.Analysis.id == analysis_id).first()
+    if not analysis:
+        raise HTTPException(status_code=404, detail="Analysis record not found")
+        
+    if analysis.status != "pending_review":
+        raise HTTPException(status_code=400, detail="This analysis is not pending a review")
+        
+    # Write review feedback row
+    review = models.DoctorReview(
+        analysis_id=analysis_id,
+        doctor_id=current_doctor.id,
+        feedback=review_data.feedback
+    )
+    db.add(review)
+    
+    # Update status of target analysis record
+    analysis.status = "reviewed"
+    
+    db.commit()
+    return {"status": "reviewed"}

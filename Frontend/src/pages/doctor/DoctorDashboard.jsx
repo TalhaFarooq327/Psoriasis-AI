@@ -8,11 +8,11 @@ import './DoctorDashboard.css';
 
 /* ── Doctor Sidebar menu ── */
 const DOCTOR_MENU = [
-  { label: 'Dashboard',       path: '/doctor/dashboard',        icon: '📊' },
-  { label: 'Patients',        path: '/doctor/patients',         icon: '👥' },
-  { label: 'Pending Reviews', path: '/doctor/pending-reviews',  icon: '📋' },
-  { label: 'Review History',  path: '/doctor/review-history',   icon: '✅' },
-  { label: 'Profile',         path: '/doctor/profile',          icon: '👤' },
+  { label: 'Dashboard', path: '/doctor/dashboard', icon: '📊' },
+  { label: 'Patients', path: '/doctor/patients', icon: '👥' },
+  { label: 'Pending Reviews', path: '/doctor/pending-reviews', icon: '📋' },
+  { label: 'Review History', path: '/doctor/review-history', icon: '✅' },
+  { label: 'Profile', path: '/doctor/profile', icon: '👤' },
 ];
 
 const DoctorDashboard = () => {
@@ -59,7 +59,7 @@ const DoctorDashboard = () => {
           <div className="ddash__welcome-content">
             <div className="ddash__welcome-badge">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               Medical Professional
             </div>
@@ -72,6 +72,12 @@ const DoctorDashboard = () => {
             <p className="ddash__welcome-sub">
               You have <strong>{pendingCount} pending reviews</strong> waiting for your assessment.
             </p>
+            <Link to="/analyze" className="ddash__welcome-btn" id="ddash-new-analysis-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M12 5v14M5 12h14" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+              Analyze Skin Image
+            </Link>
           </div>
           <div className="ddash__welcome-visual">
             <div className="ddash__welcome-icon">🩺</div>
@@ -83,9 +89,9 @@ const DoctorDashboard = () => {
           <div className="ddash__stat-card ddash__stat-card--patients">
             <div className="ddash__stat-icon">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="2"/>
-                <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="2" />
+                <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
             <div>
@@ -97,8 +103,8 @@ const DoctorDashboard = () => {
           <div className="ddash__stat-card ddash__stat-card--pending">
             <div className="ddash__stat-icon">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                <polyline points="12 6 12 12 16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+                <polyline points="12 6 12 12 16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
             <div>
@@ -110,8 +116,8 @@ const DoctorDashboard = () => {
           <div className="ddash__stat-card ddash__stat-card--completed">
             <div className="ddash__stat-icon">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <polyline points="22 4 12 14.01 9 11.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <polyline points="22 4 12 14.01 9 11.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
             <div>
@@ -126,8 +132,8 @@ const DoctorDashboard = () => {
           <div className="ddash__section-header">
             <h3 className="ddash__section-title">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <polyline points="14 2 14 8 20 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <polyline points="14 2 14 8 20 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               Recent Pending Reviews
             </h3>
@@ -179,17 +185,17 @@ const DoctorDashboard = () => {
           <Link to="/doctor/pending-reviews" className="ddash__action-card">
             <div className="ddash__action-icon ddash__action-icon--blue">📋</div>
             <span>View Pending Reviews</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </Link>
           <Link to="/doctor/patients" className="ddash__action-card">
             <div className="ddash__action-icon ddash__action-icon--green">👥</div>
             <span>Search Patients</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </Link>
           <Link to="/doctor/review-history" className="ddash__action-card">
             <div className="ddash__action-icon ddash__action-icon--cyan">✅</div>
             <span>Review History</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </Link>
         </div>
       </div>

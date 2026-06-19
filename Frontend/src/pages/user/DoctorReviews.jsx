@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
-import { MOCK_CONSULTATIONS } from '../../data/mockData';
+import { api } from '../../services/api';
 import { USER_MENU } from './UserDashboard';
 import './DoctorReviews.css';
 
@@ -10,18 +10,104 @@ const TABS = [
   { key: 'reviewed', label: 'Reviewed' },
 ];
 
+const parseFeedback = (feedback) => {
+  if (!feedback) return { recommendation: 'No recommendation provided.', notes: 'None', nextSteps: 'None' };
+  
+  const lines = feedback.split('\n');
+  let recommendation = '';
+  let notes = '';
+  let nextSteps = '';
+  
+  for (let line of lines) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('Recommendation:')) {
+      recommendation = trimmed.substring('Recommendation:'.length).trim();
+    } else if (trimmed.startsWith('Clinical Notes:')) {
+      notes = trimmed.substring('Clinical Notes:'.length).trim();
+    } else if (trimmed.startsWith('Next Steps:')) {
+      nextSteps = trimmed.substring('Next Steps:'.length).trim();
+    }
+  }
+  
+  // Fallback if not in standard formatted string
+  if (!recommendation && !notes && !nextSteps) {
+    return {
+      recommendation: feedback,
+      notes: 'See recommendation details above.',
+      nextSteps: 'N/A'
+    };
+  }
+  
+  return {
+    recommendation: recommendation || 'None',
+    notes: notes || 'None',
+    nextSteps: nextSteps || 'None'
+  };
+};
+
 const DoctorReviews = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [expandedId, setExpandedId] = useState(null);
+  const [consultations, setConsultations] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const filtered = MOCK_CONSULTATIONS.filter(c => {
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const data = await api.get('/analyses');
+        
+        // Filter: only analyses with status 'pending_review' or 'reviewed'
+        const reviewReqs = data.filter(a => a.status === 'pending_review' || a.status === 'reviewed');
+        
+        // Map backend analysis objects to consultation structure used by UI
+        const mapped = reviewReqs.map(a => {
+          const isPending = a.status === 'pending_review';
+          const review = a.reviews && a.reviews.length > 0 ? a.reviews[0] : null;
+          const parsed = parseFeedback(review?.feedback);
+          
+          return {
+            id: a.id,
+            analysisId: a.id.toString(),
+            status: isPending ? 'Pending Review' : 'Reviewed',
+            prediction: a.result_label,
+            confidence: Math.round(a.result_confidence * 100),
+            dateSubmitted: a.created_at,
+            reviewDate: review ? review.created_at : '',
+            doctorName: review?.doctor?.full_name || 'Dermatologist',
+            doctorRecommendation: parsed.recommendation,
+            doctorNotes: parsed.notes,
+            suggestedNextSteps: parsed.nextSteps
+          };
+        });
+        
+        setConsultations(mapped);
+      } catch (err) {
+        console.error("Error loading doctor reviews:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReviews();
+  }, []);
+
+  const filtered = consultations.filter(c => {
     if (activeTab === 'pending') return c.status === 'Pending Review';
     if (activeTab === 'reviewed') return c.status === 'Reviewed';
     return true;
   });
 
-  const pendingCount = MOCK_CONSULTATIONS.filter(c => c.status === 'Pending Review').length;
-  const reviewedCount = MOCK_CONSULTATIONS.filter(c => c.status === 'Reviewed').length;
+  const pendingCount = consultations.filter(c => c.status === 'Pending Review').length;
+  const reviewedCount = consultations.filter(c => c.status === 'Reviewed').length;
+
+  if (loading) {
+    return (
+      <DashboardLayout menuItems={USER_MENU} title="Doctor Reviews">
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', color: 'rgba(255,255,255,0.6)' }}>
+          <div style={{ fontSize: '1.2rem' }}>Loading reviews...</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout menuItems={USER_MENU} title="Doctor Reviews">
@@ -37,7 +123,7 @@ const DoctorReviews = () => {
         {/* ── Stats row ── */}
         <div className="drev__stats">
           <div className="drev__stat">
-            <span className="drev__stat-num">{MOCK_CONSULTATIONS.length}</span>
+            <span className="drev__stat-num">{consultations.length}</span>
             <span className="drev__stat-label">Total Requests</span>
           </div>
           <div className="drev__stat-divider" />
@@ -81,7 +167,7 @@ const DoctorReviews = () => {
                     {isPending ? '⏳' : '✅'}
                   </div>
                   <div className="drev__card-info">
-                    <div className="drev__card-pred">{c.prediction}</div>
+                    <div className="drev__card-pred" style={{ textTransform: 'capitalize' }}>{c.prediction}</div>
                     <div className="drev__card-meta">
                       Confidence: {c.confidence}% · Submitted {new Date(c.dateSubmitted).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </div>
@@ -106,7 +192,7 @@ const DoctorReviews = () => {
                     <div className="drev__detail-grid">
                       <div className="drev__detail">
                         <span className="drev__detail-label">Analysis ID</span>
-                        <span className="drev__detail-value">{c.analysisId}</span>
+                        <span className="drev__detail-value">#{c.analysisId}</span>
                       </div>
                       <div className="drev__detail">
                         <span className="drev__detail-label">Doctor</span>
@@ -132,23 +218,23 @@ const DoctorReviews = () => {
                           </svg>
                           Doctor's Response
                           <span className="drev__response-date">
-                            Reviewed on {new Date(c.reviewDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                            {c.reviewDate ? `Reviewed on ${new Date(c.reviewDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}` : ''}
                           </span>
                         </h4>
 
                         <div className="drev__response-section">
                           <div className="drev__response-label">Recommendation</div>
-                          <p className="drev__response-text">{c.doctorRecommendation}</p>
+                          <p className="drev__response-text" style={{ whiteSpace: 'pre-wrap' }}>{c.doctorRecommendation}</p>
                         </div>
 
                         <div className="drev__response-section">
                           <div className="drev__response-label">Clinical Notes</div>
-                          <p className="drev__response-text">{c.doctorNotes}</p>
+                          <p className="drev__response-text" style={{ whiteSpace: 'pre-wrap' }}>{c.doctorNotes}</p>
                         </div>
 
                         <div className="drev__response-section">
                           <div className="drev__response-label">Suggested Next Steps</div>
-                          <p className="drev__response-text">{c.suggestedNextSteps}</p>
+                          <p className="drev__response-text" style={{ whiteSpace: 'pre-wrap' }}>{c.suggestedNextSteps}</p>
                         </div>
                       </div>
                     )}

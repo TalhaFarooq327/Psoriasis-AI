@@ -18,7 +18,7 @@ from auth import get_current_user, require_doctor
 import models
 
 # Load environment variables
-load_dotenv()
+load_dotenv(override=True)
 
 # Setup paths
 BASE_DIR = Path(__file__).resolve().parent
@@ -326,3 +326,46 @@ def submit_review(
     
     db.commit()
     return {"status": "reviewed"}
+
+class ProfileUpdateSchema(BaseModel):
+    full_name: str
+    specialization: str | None = None
+    license_no: str | None = None
+    hospital: str | None = None
+
+@app.put("/profile")
+def update_profile(
+    profile_data: ProfileUpdateSchema,
+    current_user: models.Profile = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Updates the profile information of the current logged-in user/doctor.
+    """
+    if not profile_data.full_name.strip():
+        raise HTTPException(status_code=400, detail="Full name cannot be empty")
+        
+    current_user.full_name = profile_data.full_name
+    
+    if current_user.role == "doctor":
+        current_user.specialization = profile_data.specialization
+        current_user.license_no = profile_data.license_no
+        current_user.hospital = profile_data.hospital
+        
+    try:
+        db.commit()
+        db.refresh(current_user)
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Failed to update profile: {e}")
+        
+    return {
+        "id": current_user.id,
+        "email": current_user.email,
+        "full_name": current_user.full_name,
+        "role": current_user.role,
+        "specialization": current_user.specialization,
+        "license_no": current_user.license_no,
+        "hospital": current_user.hospital,
+        "created_at": current_user.created_at
+    }

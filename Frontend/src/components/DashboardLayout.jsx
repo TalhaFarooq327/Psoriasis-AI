@@ -24,8 +24,8 @@ const DashboardLayout = ({ menuItems = [], title = 'Dashboard', children }) => {
     navigate('/');
   };
 
-  const initials = user?.name
-    ? user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+  const initials = user?.full_name
+    ? user.full_name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
     : '??';
 
   return (
@@ -74,7 +74,7 @@ const DashboardLayout = ({ menuItems = [], title = 'Dashboard', children }) => {
           <div className="dash-sidebar__avatar">{initials}</div>
           {!collapsed && (
             <div className="dash-sidebar__user-info">
-              <span className="dash-sidebar__user-name">{user?.name}</span>
+              <span className="dash-sidebar__user-name">{user?.full_name || 'User'}</span>
               <span className="dash-sidebar__user-role">
                 {user?.role === 'doctor' ? user?.specialization : 'Patient'}
               </span>

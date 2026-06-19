@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '../services/supabaseClient';
+import { api } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -82,19 +83,24 @@ export const AuthProvider = ({ children }) => {
       if (error) throw error;
 
       if (data?.user) {
+        const profileData = {
+          id: data.user.id,
+          email: email,
+          full_name: fullName,
+          role: role,
+          ...additionalMetadata
+        };
+
         // 2. Insert role/name profile record into public.profiles
         const { error: profileError } = await supabase
           .from('profiles')
-          .insert({
-            id: data.user.id,
-            email: email,
-            full_name: fullName,
-            role: role,
-            ...additionalMetadata
-          });
+          .insert(profileData);
 
         if (profileError) {
           console.error("Error writing profile record to public.profiles:", profileError);
+        } else {
+          // Manually update user state with profile if session is active
+          setUser(prev => prev ? { ...prev, ...profileData } : { ...data.user, ...profileData });
         }
       }
       return data;
@@ -130,10 +136,23 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  /* ── Update Profile ── */
+  const updateProfile = useCallback(async (updates) => {
+    setLoading(true);
+    try {
+      const updatedUser = await api.put('/profile', updates);
+      setUser(prev => prev ? { ...prev, ...updatedUser } : updatedUser);
+      return updatedUser;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   /* ── Computed helpers ── */
   const isAuthenticated = !!user;
-  const isDoctor = user?.role === 'doctor';
-  const isUser = user?.role === 'user' || user?.role === 'patient'; // Support standard patient/user role naming
+  const userRole = user?.role || user?.user_metadata?.role;
+  const isDoctor = userRole === 'doctor';
+  const isUser = userRole === 'user' || userRole === 'patient'; // Support standard patient/user role naming
 
   const value = {
     user,
@@ -141,6 +160,7 @@ export const AuthProvider = ({ children }) => {
     signUp,
     login,
     logout,
+    updateProfile,
     isAuthenticated,
     isDoctor,
     isUser,

@@ -17,6 +17,29 @@
   animation: dashFadeUp 0.5s ease both;
 }
 
+.ddash__welcome-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #38A169, #0BC5EA);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s;
+  box-shadow: 0 4px 16px rgba(56,161,105,0.4);
+  border: none;
+  cursor: pointer;
+  margin-top: 18px;
+}
+
+.ddash__welcome-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(56,161,105,0.5);
+}
+
 .ddash__welcome-badge {
   display: inline-flex;
   align-items: center;

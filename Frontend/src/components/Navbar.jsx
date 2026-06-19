@@ -70,8 +70,8 @@ const Navbar = () => {
     navigate('/');
   };
 
-  const initials = user?.name
-    ? user.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+  const initials = user?.full_name
+    ? user.full_name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
     : '??';
 
   const dashboardPath = isDoctor ? '/doctor/dashboard' : '/dashboard';
@@ -128,7 +128,7 @@ const Navbar = () => {
               id="navbar-profile-btn"
             >
               <div className="navbar__avatar">{initials}</div>
-              <span className="navbar__profile-name">{user.name}</span>
+              <span className="navbar__profile-name">{user?.full_name || 'User'}</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className={`navbar__chevron ${dropOpen ? 'navbar__chevron--open' : ''}`}>
                 <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
@@ -140,7 +140,7 @@ const Navbar = () => {
                 <div className="navbar__dropdown-header">
                   <div className="navbar__dropdown-avatar">{initials}</div>
                   <div>
-                    <div className="navbar__dropdown-name">{user.name}</div>
+                    <div className="navbar__dropdown-name">{user?.full_name || 'User'}</div>
                     <div className="navbar__dropdown-email">{user.email}</div>
                   </div>
                 </div>

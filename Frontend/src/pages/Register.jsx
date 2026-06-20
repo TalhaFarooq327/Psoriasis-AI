@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import FormInput from '../components/FormInput';
@@ -25,7 +25,15 @@ const getStrength = (pw) => {
 
 const Register = () => {
   const navigate = useNavigate();
-  const { signUp } = useAuth();
+  const { signUp, isAuthenticated, loading: authLoading, user } = useAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated && !authLoading) {
+      const userRole = user?.role || user?.user_metadata?.role;
+      navigate(userRole === 'doctor' ? '/doctor/dashboard' : '/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, authLoading, user, navigate]);
 
   const [role, setRole]           = useState('user'); // 'user' | 'doctor'
   const [formData, setFormData]   = useState({

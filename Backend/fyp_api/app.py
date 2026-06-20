@@ -210,7 +210,31 @@ def get_analyses(
     analyses = db.query(models.Analysis).filter(
         models.Analysis.user_id == current_user.id
     ).order_by(models.Analysis.created_at.desc()).all()
-    return analyses
+    
+    results = []
+    for a in analyses:
+        reviews_list = []
+        for r in a.reviews:
+            reviews_list.append({
+                "id": r.id,
+                "feedback": r.feedback,
+                "created_at": r.created_at,
+                "doctor": {
+                    "full_name": r.doctor.full_name if r.doctor else "Dermatologist",
+                    "hospital": r.doctor.hospital if r.doctor else None
+                }
+            })
+        results.append({
+            "id": a.id,
+            "user_id": a.user_id,
+            "image_url": a.image_url,
+            "result_label": a.result_label,
+            "result_confidence": a.result_confidence,
+            "status": a.status,
+            "created_at": a.created_at,
+            "reviews": reviews_list
+        })
+    return results
 
 @app.get("/analyses/{analysis_id}")
 def get_analysis_detail(
@@ -326,6 +350,65 @@ def submit_review(
     
     db.commit()
     return {"status": "reviewed"}
+
+@app.get("/doctor/patients")
+def get_doctor_patients(
+    current_doctor: models.Profile = Depends(require_doctor),
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieve all unique patients (profiles) that have at least one analysis
+    submitted for review (pending_review or reviewed). Doctors only.
+    """
+    analyses = db.query(models.Analysis).filter(
+        models.Analysis.status.in_(["pending_review", "reviewed"])
+    ).order_by(models.Analysis.created_at.desc()).all()
+
+    # Build unique patients map keyed by user_id, keeping their most recent analysis
+    seen = {}
+    for a in analyses:
+        if a.user_id not in seen:
+            seen[a.user_id] = {
+                "id": a.user_id,
+                "name": a.patient.full_name if a.patient else "Unknown Patient",
+                "email": a.patient.email if a.patient else "No Email",
+                "analysis_id": a.id,
+                "analysis_date": a.created_at,
+                "result_label": a.result_label,
+                "result_confidence": a.result_confidence,
+                "status": a.status,
+            }
+    return list(seen.values())
+
+@app.get("/doctor/review-history")
+def get_review_history(
+    current_doctor: models.Profile = Depends(require_doctor),
+    db: Session = Depends(get_db)
+):
+    """
+    Retrieve all analyses that have been fully reviewed by this doctor.
+    """
+    reviews = db.query(models.DoctorReview).filter(
+        models.DoctorReview.doctor_id == current_doctor.id
+    ).order_by(models.DoctorReview.created_at.desc()).all()
+
+    results = []
+    for r in reviews:
+        a = r.analysis
+        if not a:
+            continue
+        results.append({
+            "review_id": r.id,
+            "analysis_id": a.id,
+            "feedback": r.feedback,
+            "review_date": r.created_at,
+            "patient_name": a.patient.full_name if a.patient else "Unknown Patient",
+            "patient_email": a.patient.email if a.patient else "No Email",
+            "result_label": a.result_label,
+            "result_confidence": a.result_confidence,
+            "submitted_at": a.created_at,
+        })
+    return results
 
 class ProfileUpdateSchema(BaseModel):
     full_name: str

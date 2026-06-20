@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../services/supabaseClient';
 import { api } from '../services/api';
 
@@ -7,6 +7,12 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Keep a mutable ref of the user state to prevent stale closure issues in callbacks
+  const userRef = useRef(null);
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
 
   // Helper to fetch custom profile details from DB
   const fetchProfile = async (userId) => {
@@ -49,8 +55,12 @@ export const AuthProvider = ({ children }) => {
     initializeAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setLoading(true);
       if (session?.user) {
+        // If we already have the profile data for this user in state, skip fetching again
+        if (userRef.current && userRef.current.id === session.user.id && userRef.current.role) {
+          return;
+        }
+        setLoading(true);
         const profile = await fetchProfile(session.user.id);
         setUser(profile ? { ...session.user, ...profile } : session.user);
       } else {
@@ -118,6 +128,14 @@ export const AuthProvider = ({ children }) => {
         password,
       });
       if (error) throw error;
+      
+      // Fetch custom profile details from DB immediately on login
+      if (data?.user) {
+        const profile = await fetchProfile(data.user.id);
+        const combinedUser = profile ? { ...data.user, ...profile } : data.user;
+        setUser(combinedUser);
+        return combinedUser;
+      }
       return data;
     } finally {
       setLoading(false);

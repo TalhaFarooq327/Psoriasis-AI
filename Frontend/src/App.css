@@ -9,3 +9,80 @@
 section[id] {
   scroll-margin-top: 72px;
 }
+
+/* ── Premium Glassmorphic Loading Screen ── */
+.app-loading-screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at center, #ffffff 0%, var(--bg-light) 100%);
+  z-index: 9999;
+}
+
+.app-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  text-align: center;
+  max-width: 320px;
+  width: 90%;
+}
+
+.app-loading-logo {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  border-radius: var(--radius-lg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 8px 24px rgba(49, 130, 206, 0.3);
+  animation: float 3s ease-in-out infinite;
+  margin-bottom: 8px;
+}
+
+.app-loading-logo svg {
+  width: 32px;
+  height: 32px;
+}
+
+.app-loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3.5px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.app-loading-text {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-dark);
+  letter-spacing: -0.2px;
+}
+
+.app-loading-subtext {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: -12px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

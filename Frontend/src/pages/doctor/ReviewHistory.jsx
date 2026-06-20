@@ -1,20 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
-import { MOCK_CONSULTATIONS } from '../../data/mockData';
+import { api } from '../../services/api';
 import { DOCTOR_MENU } from './DoctorDashboard';
 import './ReviewHistory.css';
 
 const ReviewHistory = () => {
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
-  // Only completed/reviewed consultations
-  const reviews = MOCK_CONSULTATIONS.filter(c => c.status === 'Reviewed');
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const data = await api.get('/doctor/review-history');
+        setReviews(data);
+      } catch (err) {
+        console.error("Error loading review history:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchHistory();
+  }, []);
 
-  const filtered = reviews.filter(c =>
-    c.patientName.toLowerCase().includes(search.toLowerCase()) ||
-    c.analysisId.toLowerCase().includes(search.toLowerCase()) ||
-    c.prediction.toLowerCase().includes(search.toLowerCase())
+  const filtered = reviews.filter(r =>
+    r.patient_name.toLowerCase().includes(search.toLowerCase()) ||
+    String(r.analysis_id).includes(search) ||
+    r.result_label.toLowerCase().includes(search.toLowerCase())
   );
+
+  if (loading) {
+    return (
+      <DashboardLayout menuItems={DOCTOR_MENU} title="Review History">
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', color: 'rgba(255,255,255,0.6)' }}>
+          <div style={{ fontSize: '1.2rem' }}>Loading review history...</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout menuItems={DOCTOR_MENU} title="Review History">
@@ -47,43 +70,48 @@ const ReviewHistory = () => {
         {/* ── List ── */}
         {filtered.length > 0 ? (
           <div className="drhist__list">
-            {filtered.map(c => (
-              <div key={c.id} className="drhist__card">
-                {/* Left: patient + meta */}
-                <div className="drhist__card-left">
-                  <div className="drhist__avatar">
-                    {c.patientName.split(' ').map(w => w[0]).join('').toUpperCase()}
+            {filtered.map(r => {
+              const confidencePct = Math.round(r.result_confidence * 100);
+              const isHealthy = r.result_label.toLowerCase().includes('normal');
+
+              return (
+                <div key={r.review_id} className="drhist__card">
+                  {/* Left: patient + meta */}
+                  <div className="drhist__card-left">
+                    <div className="drhist__avatar">
+                      {r.patient_name.split(' ').map(w => w[0]).join('').toUpperCase()}
+                    </div>
+                    <div className="drhist__info">
+                      <div className="drhist__name">{r.patient_name}</div>
+                      <div className="drhist__meta">
+                        Analysis #{r.analysis_id} · Submitted {new Date(r.submitted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </div>
+                    </div>
                   </div>
-                  <div className="drhist__info">
-                    <div className="drhist__name">{c.patientName}</div>
-                    <div className="drhist__meta">
-                      Analysis {c.analysisId} · Submitted {new Date(c.dateSubmitted).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+
+                  {/* Center: prediction + confidence */}
+                  <div className="drhist__card-center">
+                    <span className={`drhist__badge ${isHealthy ? 'drhist__badge--green' : 'drhist__badge--red'}`} style={{ textTransform: 'capitalize' }}>
+                      {isHealthy ? '✓' : '⚠'} {r.result_label}
+                    </span>
+                    <div className="drhist__conf">
+                      <div className="drhist__conf-bar">
+                        <div className="drhist__conf-fill" style={{ width: `${confidencePct}%` }} />
+                      </div>
+                      <span>{confidencePct}%</span>
+                    </div>
+                  </div>
+
+                  {/* Right: review date + status */}
+                  <div className="drhist__card-right">
+                    <span className="drhist__badge drhist__badge--green drhist__badge--outline">✅ Reviewed</span>
+                    <div className="drhist__review-date">
+                      {new Date(r.review_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </div>
                   </div>
                 </div>
-
-                {/* Center: prediction + confidence */}
-                <div className="drhist__card-center">
-                  <span className={`drhist__badge ${c.prediction.includes('No') ? 'drhist__badge--green' : 'drhist__badge--red'}`}>
-                    {c.prediction.includes('No') ? '✓' : '⚠'} {c.prediction}
-                  </span>
-                  <div className="drhist__conf">
-                    <div className="drhist__conf-bar">
-                      <div className="drhist__conf-fill" style={{ width: `${c.confidence}%` }} />
-                    </div>
-                    <span>{c.confidence}%</span>
-                  </div>
-                </div>
-
-                {/* Right: review date + status */}
-                <div className="drhist__card-right">
-                  <span className="drhist__badge drhist__badge--green drhist__badge--outline">✅ Reviewed</span>
-                  <div className="drhist__review-date">
-                    {new Date(c.reviewDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="drhist__empty">

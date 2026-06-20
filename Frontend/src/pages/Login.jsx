@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import FormInput from '../components/FormInput';
@@ -7,7 +7,15 @@ import './Login.css';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated, loading: authLoading, user } = useAuth();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated && !authLoading) {
+      const userRole = user?.role || user?.user_metadata?.role;
+      navigate(userRole === 'doctor' ? '/doctor/dashboard' : '/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, authLoading, user, navigate]);
 
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});

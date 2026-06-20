@@ -55,7 +55,25 @@ const LandingPage = () => (
 
 /* ── Protected route — redirect to login if not authenticated ── */
 const ProtectedRoute = ({ children, requireRole }) => {
-  const { isAuthenticated, isDoctor, isUser } = useAuth();
+  const { isAuthenticated, isDoctor, isUser, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="app-loading-screen">
+        <div className="app-loading-container animate-fade-up">
+          <div className="app-loading-logo">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 2L3 7V12C3 16.55 6.84 20.74 12 22C17.16 20.74 21 16.55 21 12V7L12 2Z" fill="white" fillOpacity="0.9"/>
+              <path d="M8 12H16M12 8V16" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </div>
+          <div className="app-loading-spinner"></div>
+          <div className="app-loading-text">Verifying credentials...</div>
+          <div className="app-loading-subtext">Securing your medical data portal</div>
+        </div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -74,7 +92,25 @@ const ProtectedRoute = ({ children, requireRole }) => {
 
 /* ── Smart /dashboard redirect: user → /dashboard, doctor → /doctor/dashboard ── */
 const DashboardRedirect = () => {
-  const { isAuthenticated, isDoctor } = useAuth();
+  const { isAuthenticated, isDoctor, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="app-loading-screen">
+        <div className="app-loading-container animate-fade-up">
+          <div className="app-loading-logo">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 2L3 7V12C3 16.55 6.84 20.74 12 22C17.16 20.74 21 16.55 21 12V7L12 2Z" fill="white" fillOpacity="0.9"/>
+              <path d="M8 12H16M12 8V16" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </div>
+          <div className="app-loading-spinner"></div>
+          <div className="app-loading-text">Routing to dashboard...</div>
+        </div>
+      </div>
+    );
+  }
+
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   if (isDoctor) return <Navigate to="/doctor/dashboard" replace />;
   return <Navigate to="/dashboard" replace />;

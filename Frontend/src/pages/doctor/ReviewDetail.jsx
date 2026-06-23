@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
 import DashboardLayout from '../../components/DashboardLayout';
 import { DOCTOR_MENU } from './DoctorDashboard';
@@ -8,6 +9,7 @@ import './ReviewDetail.css';
 const ReviewDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { fetchPendingReviews, fetchPatients, fetchReviewHistory } = useAuth();
 
   const [analysis, setAnalysis] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -67,6 +69,11 @@ Next Steps: ${form.nextSteps || 'None'}
         feedback: consolidatedFeedback
       });
       setSubmitted(true);
+      
+      // Refresh doctor page caches
+      fetchPendingReviews(true);
+      fetchPatients(true);
+      fetchReviewHistory(true);
     } catch (err) {
       alert(err.message || 'Failed to submit case review.');
     } finally {

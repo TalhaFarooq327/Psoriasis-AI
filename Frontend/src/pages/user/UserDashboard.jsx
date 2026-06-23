@@ -10,29 +10,16 @@ import './UserDashboard.css';
 const USER_MENU = [
   { label: 'Dashboard',      path: '/dashboard',          icon: '📊' },
   { label: 'Analysis History',path: '/dashboard/history',  icon: '🕐' },
-  { label: 'New Analysis',   path: '/analyze',            icon: '🔬' },
   { label: 'Doctor Reviews', path: '/dashboard/reviews',  icon: '👨‍⚕️' },
   { label: 'Profile',        path: '/dashboard/profile',  icon: '👤' },
 ];
 
 const UserDashboard = () => {
-  const { user } = useAuth();
-  const [analyses, setAnalyses] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { user, analyses, analysesLoading, fetchAnalyses } = useAuth();
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const data = await api.get('/analyses');
-        setAnalyses(data);
-      } catch (err) {
-        console.error("Error loading dashboard data:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
-  }, []);
+    fetchAnalyses();
+  }, [fetchAnalyses]);
 
   const firstName = user?.full_name?.split(' ')[0] || 'User';
 
@@ -44,7 +31,7 @@ const UserDashboard = () => {
   const recentAnalyses = analyses.slice(0, 3);
   const pendingConsults = analyses.filter(a => a.status === 'pending_review');
 
-  if (loading) {
+  if (analysesLoading) {
     return (
       <DashboardLayout menuItems={USER_MENU} title="Dashboard">
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', color: 'rgba(255,255,255,0.6)' }}>

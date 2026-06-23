@@ -15,7 +15,7 @@ const DashboardLayout = ({ menuItems = [], title = 'Dashboard', children }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, isDoctor } = useAuth();
 
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -48,7 +48,7 @@ const DashboardLayout = ({ menuItems = [], title = 'Dashboard', children }) => {
 
     const loadNotifications = async () => {
       try {
-        if (user.role === 'doctor') {
+        if (isDoctor) {
           // Fetch pending reviews for doctors
           const data = await api.get('/doctor/pending-reviews');
           const notifs = data.map(item => ({
@@ -162,7 +162,7 @@ const DashboardLayout = ({ menuItems = [], title = 'Dashboard', children }) => {
             <div className="dash-sidebar__user-info">
               <span className="dash-sidebar__user-name">{user?.full_name || 'User'}</span>
               <span className="dash-sidebar__user-role">
-                {user?.role === 'doctor' ? user?.specialization : 'Patient'}
+                {isDoctor ? user?.specialization : 'Patient'}
               </span>
             </div>
           )}

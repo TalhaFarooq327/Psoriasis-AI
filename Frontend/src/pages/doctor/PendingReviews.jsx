@@ -1,29 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import DashboardLayout from '../../components/DashboardLayout';
+import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
 import { DOCTOR_MENU } from './DoctorDashboard';
 import './PendingReviews.css';
 
 const PendingReviews = () => {
-  const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { pendingReviews, pendingReviewsLoading, fetchPendingReviews } = useAuth();
 
   useEffect(() => {
-    const fetchPending = async () => {
-      try {
-        const data = await api.get('/doctor/pending-reviews');
-        setReviews(data);
-      } catch (err) {
-        console.error("Error loading pending reviews:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPending();
-  }, []);
+    fetchPendingReviews();
+  }, [fetchPendingReviews]);
 
-  if (loading) {
+  const reviews = pendingReviews;
+
+  if (pendingReviewsLoading) {
     return (
       <DashboardLayout menuItems={DOCTOR_MENU} title="Pending Reviews">
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', color: 'rgba(255,255,255,0.6)' }}>

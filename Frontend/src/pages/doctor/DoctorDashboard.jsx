@@ -16,30 +16,27 @@ const DOCTOR_MENU = [
 ];
 
 const DoctorDashboard = () => {
-  const { user } = useAuth();
-  const [pendingReviews, setPendingReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    user,
+    pendingReviews,
+    pendingReviewsLoading,
+    fetchPendingReviews,
+    reviewHistory,
+    reviewHistoryLoading,
+    fetchReviewHistory,
+  } = useAuth();
 
   useEffect(() => {
-    const loadDoctorData = async () => {
-      try {
-        const data = await api.get('/doctor/pending-reviews');
-        setPendingReviews(data);
-      } catch (err) {
-        console.error("Error loading doctor pending reviews:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadDoctorData();
-  }, []);
+    fetchPendingReviews();
+    fetchReviewHistory();
+  }, [fetchPendingReviews, fetchReviewHistory]);
 
   const totalPatients = new Set(pendingReviews.map(r => r.patient_email)).size;
   const pendingCount = pendingReviews.length;
-  // Completed reviews can be calculated or mocked as 0 / database counts
-  const completedReviews = 0;
+  const completedReviews = reviewHistory.length;
 
   const recentPending = pendingReviews.slice(0, 3);
+  const loading = pendingReviewsLoading || reviewHistoryLoading;
 
   if (loading) {
     return (

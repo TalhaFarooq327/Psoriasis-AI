@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
+import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
 import { USER_MENU } from './UserDashboard';
 import './AnalysisHistory.css';
@@ -42,34 +43,25 @@ const parseFeedback = (feedback) => {
 const AnalysisHistory = () => {
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
-  const [analyses, setAnalyses] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { analyses, analysesLoading, fetchAnalyses } = useAuth();
   const [selectedAnalysis, setSelectedAnalysis] = useState(null);
   const [requestingReviewId, setRequestingReviewId] = useState(null);
 
-  const fetchAnalyses = async () => {
-    try {
-      const data = await api.get('/analyses');
-      setAnalyses(data);
-    } catch (err) {
-      console.error("Error fetching analysis history:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     fetchAnalyses();
-  }, []);
+  }, [fetchAnalyses]);
 
   const handleRequestReview = async (analysisId) => {
     setRequestingReviewId(analysisId);
     try {
       await api.post(`/analyses/${analysisId}/request-review`);
       // Re-fetch analyses to update status locally
-      await fetchAnalyses();
+      const updated = await fetchAnalyses(true);
       // Update selectedAnalysis in state if open to show status change
-      setSelectedAnalysis(prev => prev && prev.id === analysisId ? { ...prev, status: 'pending_review' } : prev);
+      if (updated) {
+        const matching = updated.find(a => a.id === analysisId);
+        if (matching) setSelectedAnalysis(matching);
+      }
     } catch (err) {
       console.error("Error requesting review:", err);
       alert("Failed to request doctor review. Please try again.");
@@ -122,7 +114,7 @@ Please consult a licensed dermatologist for professional medical advice.
     return matchSearch && matchFilter;
   });
 
-  if (loading) {
+  if (analysesLoading) {
     return (
       <DashboardLayout menuItems={USER_MENU} title="Analysis History">
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', color: 'rgba(255,255,255,0.6)' }}>

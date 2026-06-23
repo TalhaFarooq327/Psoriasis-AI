@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
+import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
 import { USER_MENU } from './UserDashboard';
 import './DoctorReviews.css';
@@ -48,47 +49,35 @@ const parseFeedback = (feedback) => {
 const DoctorReviews = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [expandedId, setExpandedId] = useState(null);
-  const [consultations, setConsultations] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { analyses, analysesLoading, fetchAnalyses } = useAuth();
 
   useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const data = await api.get('/analyses');
-        
-        // Filter: only analyses with status 'pending_review' or 'reviewed'
-        const reviewReqs = data.filter(a => a.status === 'pending_review' || a.status === 'reviewed');
-        
-        // Map backend analysis objects to consultation structure used by UI
-        const mapped = reviewReqs.map(a => {
-          const isPending = a.status === 'pending_review';
-          const review = a.reviews && a.reviews.length > 0 ? a.reviews[0] : null;
-          const parsed = parseFeedback(review?.feedback);
-          
-          return {
-            id: a.id,
-            analysisId: a.id.toString(),
-            status: isPending ? 'Pending Review' : 'Reviewed',
-            prediction: a.result_label,
-            confidence: Math.round(a.result_confidence * 100),
-            dateSubmitted: a.created_at,
-            reviewDate: review ? review.created_at : '',
-            doctorName: review?.doctor?.full_name || 'Dermatologist',
-            doctorRecommendation: parsed.recommendation,
-            doctorNotes: parsed.notes,
-            suggestedNextSteps: parsed.nextSteps
-          };
-        });
-        
-        setConsultations(mapped);
-      } catch (err) {
-        console.error("Error loading doctor reviews:", err);
-      } finally {
-        setLoading(false);
-      }
+    fetchAnalyses();
+  }, [fetchAnalyses]);
+
+  // Filter: only analyses with status 'pending_review' or 'reviewed'
+  const reviewReqs = analyses.filter(a => a.status === 'pending_review' || a.status === 'reviewed');
+  
+  // Map backend analysis objects to consultation structure used by UI
+  const consultations = reviewReqs.map(a => {
+    const isPending = a.status === 'pending_review';
+    const review = a.reviews && a.reviews.length > 0 ? a.reviews[0] : null;
+    const parsed = parseFeedback(review?.feedback);
+    
+    return {
+      id: a.id,
+      analysisId: a.id.toString(),
+      status: isPending ? 'Pending Review' : 'Reviewed',
+      prediction: a.result_label,
+      confidence: Math.round(a.result_confidence * 100),
+      dateSubmitted: a.created_at,
+      reviewDate: review ? review.created_at : '',
+      doctorName: review?.doctor?.full_name || 'Dermatologist',
+      doctorRecommendation: parsed.recommendation,
+      doctorNotes: parsed.notes,
+      suggestedNextSteps: parsed.nextSteps
     };
-    fetchReviews();
-  }, []);
+  });
 
   const filtered = consultations.filter(c => {
     if (activeTab === 'pending') return c.status === 'Pending Review';
@@ -99,7 +88,7 @@ const DoctorReviews = () => {
   const pendingCount = consultations.filter(c => c.status === 'Pending Review').length;
   const reviewedCount = consultations.filter(c => c.status === 'Reviewed').length;
 
-  if (loading) {
+  if (analysesLoading) {
     return (
       <DashboardLayout menuItems={USER_MENU} title="Doctor Reviews">
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', color: 'rgba(255,255,255,0.6)' }}>

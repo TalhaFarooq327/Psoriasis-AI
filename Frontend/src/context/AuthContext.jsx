@@ -142,6 +142,91 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  /* ── Client-side Caching (SWR pattern) ── */
+  const [analyses, setAnalyses] = useState([]);
+  const [analysesLoading, setAnalysesLoading] = useState(true);
+  const analysesRef = useRef([]);
+  useEffect(() => { analysesRef.current = analyses; }, [analyses]);
+
+  const fetchAnalyses = useCallback(async (force = false) => {
+    const hasData = analysesRef.current && analysesRef.current.length > 0;
+    if (!hasData || force) {
+      setAnalysesLoading(true);
+    }
+    try {
+      const data = await api.get('/analyses');
+      setAnalyses(data);
+      return data;
+    } catch (err) {
+      console.error("Error fetching analyses:", err);
+    } finally {
+      setAnalysesLoading(false);
+    }
+  }, []);
+
+  const [pendingReviews, setPendingReviews] = useState([]);
+  const [pendingReviewsLoading, setPendingReviewsLoading] = useState(true);
+  const pendingReviewsRef = useRef([]);
+  useEffect(() => { pendingReviewsRef.current = pendingReviews; }, [pendingReviews]);
+
+  const fetchPendingReviews = useCallback(async (force = false) => {
+    const hasData = pendingReviewsRef.current && pendingReviewsRef.current.length > 0;
+    if (!hasData || force) {
+      setPendingReviewsLoading(true);
+    }
+    try {
+      const data = await api.get('/doctor/pending-reviews');
+      setPendingReviews(data);
+      return data;
+    } catch (err) {
+      console.error("Error fetching pending reviews:", err);
+    } finally {
+      setPendingReviewsLoading(false);
+    }
+  }, []);
+
+  const [patients, setPatients] = useState([]);
+  const [patientsLoading, setPatientsLoading] = useState(true);
+  const patientsRef = useRef([]);
+  useEffect(() => { patientsRef.current = patients; }, [patients]);
+
+  const fetchPatients = useCallback(async (force = false) => {
+    const hasData = patientsRef.current && patientsRef.current.length > 0;
+    if (!hasData || force) {
+      setPatientsLoading(true);
+    }
+    try {
+      const data = await api.get('/doctor/patients');
+      setPatients(data);
+      return data;
+    } catch (err) {
+      console.error("Error fetching patients:", err);
+    } finally {
+      setPatientsLoading(false);
+    }
+  }, []);
+
+  const [reviewHistory, setReviewHistory] = useState([]);
+  const [reviewHistoryLoading, setReviewHistoryLoading] = useState(true);
+  const reviewHistoryRef = useRef([]);
+  useEffect(() => { reviewHistoryRef.current = reviewHistory; }, [reviewHistory]);
+
+  const fetchReviewHistory = useCallback(async (force = false) => {
+    const hasData = reviewHistoryRef.current && reviewHistoryRef.current.length > 0;
+    if (!hasData || force) {
+      setReviewHistoryLoading(true);
+    }
+    try {
+      const data = await api.get('/doctor/review-history');
+      setReviewHistory(data);
+      return data;
+    } catch (err) {
+      console.error("Error fetching review history:", err);
+    } finally {
+      setReviewHistoryLoading(false);
+    }
+  }, []);
+
   /* ── Logout via Supabase ── */
   const logout = useCallback(async () => {
     setLoading(true);
@@ -149,6 +234,11 @@ export const AuthProvider = ({ children }) => {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       setUser(null);
+      // Clear cache
+      setAnalyses([]);
+      setPendingReviews([]);
+      setPatients([]);
+      setReviewHistory([]);
     } finally {
       setLoading(false);
     }
@@ -182,6 +272,18 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated,
     isDoctor,
     isUser,
+    analyses,
+    analysesLoading,
+    fetchAnalyses,
+    pendingReviews,
+    pendingReviewsLoading,
+    fetchPendingReviews,
+    patients,
+    patientsLoading,
+    fetchPatients,
+    reviewHistory,
+    reviewHistoryLoading,
+    fetchReviewHistory,
   };
 
   return (

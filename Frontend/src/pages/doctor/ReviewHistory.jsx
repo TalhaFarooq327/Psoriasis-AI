@@ -1,27 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/DashboardLayout';
+import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
 import { DOCTOR_MENU } from './DoctorDashboard';
 import './ReviewHistory.css';
 
 const ReviewHistory = () => {
-  const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { reviewHistory, reviewHistoryLoading, fetchReviewHistory } = useAuth();
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        const data = await api.get('/doctor/review-history');
-        setReviews(data);
-      } catch (err) {
-        console.error("Error loading review history:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchHistory();
-  }, []);
+    fetchReviewHistory();
+  }, [fetchReviewHistory]);
+
+  const reviews = reviewHistory;
 
   const filtered = reviews.filter(r =>
     r.patient_name.toLowerCase().includes(search.toLowerCase()) ||
@@ -29,7 +21,7 @@ const ReviewHistory = () => {
     r.result_label.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (loading) {
+  if (reviewHistoryLoading) {
     return (
       <DashboardLayout menuItems={DOCTOR_MENU} title="Review History">
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', color: 'rgba(255,255,255,0.6)' }}>

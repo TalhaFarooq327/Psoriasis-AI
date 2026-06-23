@@ -1,28 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import DashboardLayout from '../../components/DashboardLayout';
+import { useAuth } from '../../context/AuthContext';
 import { api } from '../../services/api';
 import { DOCTOR_MENU } from './DoctorDashboard';
 import './Patients.css';
 
 const Patients = () => {
-  const [patients, setPatients] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { patients, patientsLoading, fetchPatients } = useAuth();
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    const fetchPatients = async () => {
-      try {
-        const data = await api.get('/doctor/patients');
-        setPatients(data);
-      } catch (err) {
-        console.error("Error fetching patients list:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchPatients();
-  }, []);
+  }, [fetchPatients]);
 
   const filtered = patients.filter(p =>
     p.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -30,7 +20,7 @@ const Patients = () => {
     p.email.toLowerCase().includes(search.toLowerCase())
   );
 
-  if (loading) {
+  if (patientsLoading) {
     return (
       <DashboardLayout menuItems={DOCTOR_MENU} title="Patients">
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px', color: 'rgba(255,255,255,0.6)' }}>

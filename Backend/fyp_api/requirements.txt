@@ -3,9 +3,11 @@ uvicorn
 numpy
 Pillow
 python-multipart
-tensorflow
 sqlalchemy
 psycopg2-binary
 python-dotenv
 python-jose[cryptography]
+requests
 supabase
+# Optional for local AI inference; install separately on Python 3.11/3.12 if you want model predictions.
+tensorflow==2.16.2; python_version < "3.13"

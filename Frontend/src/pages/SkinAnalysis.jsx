@@ -203,6 +203,8 @@ const UploadStep = ({ onContinue, initialFile }) => {
 /* ─────────────────────────────────────
    STEP 2 — Processing
    ───────────────────────────────────── */
+const inflightAnalyses = new Map();
+
 const ProcessingStep = ({ file, onComplete }) => {
   const [progress, setProgress] = useState(0);
   const [msgIdx, setMsgIdx] = useState(0);
@@ -217,10 +219,21 @@ const ProcessingStep = ({ file, onComplete }) => {
     // Start real image upload & classification API call
     const runAnalysis = async () => {
       try {
-        const formData = new FormData();
-        formData.append('file', file);
+        let res;
+        if (inflightAnalyses.has(file)) {
+          res = await inflightAnalyses.get(file);
+        } else {
+          const formData = new FormData();
+          formData.append('file', file);
+          const promise = api.post('/predict', formData);
+          inflightAnalyses.set(file, promise);
+          try {
+            res = await promise;
+          } finally {
+            inflightAnalyses.delete(file);
+          }
+        }
         
-        const res = await api.post('/predict', formData);
         resultData = res;
         apiDone = true;
         

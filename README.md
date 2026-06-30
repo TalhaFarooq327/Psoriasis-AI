@@ -1,13 +1,13 @@
 # Psoriasis AI — Skin Condition Classification
 
-A two-role web application designed to classify skin psoriasis using a deep-learning ResNet50 model. Features user profile management, skin classification prediction, analysis history, and an interactive doctor review/consultation system.
+A two-role web application designed to classify skin psoriasis using a deep-learning ML Model. Features user profile management, skin classification prediction, analysis history, and an interactive doctor review/consultation system.
 
 ---
 
 ## 🛠️ Technology Stack
 * **Frontend**: React 19 + Vite 8 + React Router v7 + Vanilla CSS
 * **Backend**: FastAPI (Python 3.12) + SQLAlchemy ORM + python-jose (JWT validation)
-* **AI Model**: ResNet50 Binary Classifier (`.keras` format)
+* **AI Model**: ML Model Binary Classifier (`.keras` format)
 * **Auth, DB & Storage**: Supabase Ecosystem (Auth, PostgreSQL DB, Storage Bucket)
 
 ---
@@ -17,7 +17,7 @@ A two-role web application designed to classify skin psoriasis using a deep-lear
 Psoriasis AI/
 ├── Backend/
 │   ├── fyp_api/
-│   │   ├── model/                  # ResNet50 .keras model directory
+│   │   ├── model/                  # ML Model .keras model directory
 │   │   ├── app.py                  # FastAPI server routes & lifespan
 │   │   ├── auth.py                 # Supabase JWT signature middleware
 │   │   ├── database.py             # SQLAlchemy Postgres configurations

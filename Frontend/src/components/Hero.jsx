@@ -135,7 +135,7 @@ const Hero = () => {
 
           <p className="hero__subtitle">
             Upload a photo of your skin and get a clinical-grade analysis in under&nbsp;1&nbsp;minute.
-            Powered by deep learning trained on 60,000+ dermatology images.
+            Powered by deep learning trained on 120K+ dermatology images.
           </p>
 
           <div className="hero__cta">

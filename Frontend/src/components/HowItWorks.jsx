@@ -26,7 +26,7 @@ const steps = [
       </svg>
     ),
     title: 'AI Processes Your Image',
-    desc: 'Our deep learning model (ResNet-50) analyzes skin patterns, texture, and color signatures to evaluate psoriasis indicators.',
+    desc: 'Our deep learning model (ML Model) analyzes skin patterns, texture, and color signatures to evaluate psoriasis indicators.',
     color: '#0BC5EA',
     bg: 'rgba(11,197,234,0.08)',
   },

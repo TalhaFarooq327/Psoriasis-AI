@@ -58,7 +58,7 @@ const QuickInsight = () => {
               {[
                 { time: '0s', label: 'Image uploaded', done: true, color: '#3182CE' },
                 { time: '15s', label: 'Pre-processing image', done: true, color: '#0BC5EA' },
-                { time: '30s', label: 'Running ResNet-50 model', done: true, color: '#38A169' },
+                { time: '30s', label: 'Running ML Model', done: true, color: '#38A169' },
                 { time: '45s', label: 'Analyzing skin patterns', done: true, color: '#805AD5' },
                 { time: '< 60s', label: 'Prediction ready ✓', done: true, color: '#F6AD55', highlight: true },
               ].map((item, i) => (

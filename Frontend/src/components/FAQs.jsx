@@ -4,7 +4,7 @@ import './FAQs.css';
 const faqs = [
   {
     q: 'How accurate is Psoriasis AI?',
-    a: 'Our AI model is based on ResNet-50 and has been validated with a 99% accuracy rate on clinical dermatology datasets. However, it is designed as a screening tool and should not replace professional medical diagnosis.',
+    a: 'Our AI model is based on our ML Model and has been validated with a 99% accuracy rate on clinical dermatology datasets. However, it is designed as a screening tool and should not replace professional medical diagnosis.',
   },
   {
     q: 'What type of images should I upload?',

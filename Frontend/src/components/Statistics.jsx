@@ -44,7 +44,7 @@ const stats = [
     ),
     color: '#38A169',
     gradient: 'linear-gradient(135deg, #38A169, #68D391)',
-    desc: 'ResNet-50 clinical validation',
+    desc: 'ML Model clinical validation',
   },
   {
     id: 'stat-users',

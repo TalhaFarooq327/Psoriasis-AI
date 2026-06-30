@@ -62,8 +62,8 @@ const points = [
         <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
-    title: 'ResNet-Based AI Model',
-    desc: 'Trained on verified clinical datasets using ResNet-50 — the same architecture used in medical imaging research.',
+    title: 'ML-Based AI Model',
+    desc: 'Trained on verified clinical datasets using an ML Model — the same architecture used in medical imaging research.',
     color: '#E53E3E',
   },
 ];

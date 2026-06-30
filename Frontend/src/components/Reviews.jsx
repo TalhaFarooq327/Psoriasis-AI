@@ -31,7 +31,7 @@ const reviews = [
     role: 'Healthcare Student',
     avatar: 'TH',
     rating: 5,
-    text: 'Accurate and impressive results. The ResNet-based model clearly works well. I tested it as part of my research on AI in dermatology — excellent performance.',
+    text: 'Accurate and impressive results. The ML-based model clearly works well. I tested it as part of my research on AI in dermatology — excellent performance.',
     color: '#0BC5EA',
   },
   {
@@ -55,7 +55,7 @@ const reviews = [
     role: 'Dermatologist',
     avatar: 'KI',
     rating: 5,
-    text: 'As a dermatologist, I find this tool incredibly useful for triaging patients remotely. The ResNet model performs well on common psoriasis presentations.',
+    text: 'As a dermatologist, I find this tool incredibly useful for triaging patients remotely. The ML Model performs well on common psoriasis presentations.',
     color: '#ED8936',
   },
 ];

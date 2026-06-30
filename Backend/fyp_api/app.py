@@ -57,7 +57,7 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         print(f"Error initializing database tables on startup: {e}")
 
-    # 2. Load the ResNet50 classification model
+    # 2. Load the ML Model
     if tf is None:
         print("TensorFlow is not installed. Skipping model load.")
     else:

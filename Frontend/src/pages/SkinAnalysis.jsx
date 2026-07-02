@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
+import ImageCropper from '../components/ImageCropper';
 import './SkinAnalysis.css';
 
 const STATUS_MESSAGES = [
@@ -55,18 +56,23 @@ const Steps = ({ current }) => {
 };
 
 /* ─────────────────────────────────────
-   STEP 1 — Upload
+   STEP 1 — Upload (with optional crop)
    ───────────────────────────────────── */
 const UploadStep = ({ onContinue, initialFile }) => {
   const [preview, setPreview] = useState(null);
   const [dragging, setDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isCropped, setIsCropped] = useState(false);
+  const [showCropper, setShowCropper] = useState(false);
+  const [originalPreview, setOriginalPreview] = useState(null);
   const fileRef = useRef(null);
 
   useEffect(() => {
     if (initialFile) {
       setSelectedFile(initialFile);
-      setPreview(URL.createObjectURL(initialFile));
+      const url = URL.createObjectURL(initialFile);
+      setPreview(url);
+      setOriginalPreview(url);
     }
   }, [initialFile]);
 
@@ -82,6 +88,8 @@ const UploadStep = ({ onContinue, initialFile }) => {
     setSelectedFile(file);
     const url = URL.createObjectURL(file);
     setPreview(url);
+    setOriginalPreview(url);
+    setIsCropped(false);
   };
 
   const onFileChange = (e) => handleFile(e.target.files?.[0]);
@@ -94,6 +102,23 @@ const UploadStep = ({ onContinue, initialFile }) => {
 
   const onDragOver = (e) => { e.preventDefault(); setDragging(true); };
   const onDragLeave = () => setDragging(false);
+
+  const resetImage = () => {
+    setPreview(null);
+    setOriginalPreview(null);
+    setSelectedFile(null);
+    setIsCropped(false);
+    setShowCropper(false);
+    fileRef.current?.click();
+  };
+
+  const handleCropDone = (croppedFile) => {
+    setSelectedFile(croppedFile);
+    const croppedUrl = URL.createObjectURL(croppedFile);
+    setPreview(croppedUrl);
+    setIsCropped(true);
+    setShowCropper(false);
+  };
 
   return (
     <>
@@ -157,16 +182,28 @@ const UploadStep = ({ onContinue, initialFile }) => {
           <div className="sa-preview">
             <img src={preview} alt="Skin preview" className="sa-preview__img" />
             <div className="sa-preview__overlay">
-              <div className="sa-preview__badge">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                  <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                Image ready for analysis
+              <div className={`sa-preview__badge ${isCropped ? 'sa-preview__badge--cropped' : ''}`}>
+                {isCropped ? (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <path d="M6.13 1L6 16a2 2 0 002 2h15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M1 6.13L16 6a2 2 0 012 2v15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    Cropped &amp; ready for analysis
+                  </>
+                ) : (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    Image ready for analysis
+                  </>
+                )}
               </div>
             </div>
             <button
               className="sa-preview__change"
-              onClick={() => { setPreview(null); setSelectedFile(null); fileRef.current?.click(); }}
+              onClick={resetImage}
               id="change-image-btn"
             >
               Change Image
@@ -183,19 +220,56 @@ const UploadStep = ({ onContinue, initialFile }) => {
             <span>Ensure good lighting and clear focus for accurate results</span>
           </div>
 
-          <button
-            className="sa-btn-continue"
-            disabled={!preview || !selectedFile}
-            onClick={() => onContinue(selectedFile)}
-            id="continue-to-analysis-btn"
-          >
-            Continue
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M5 12h14M12 5l7 7-7 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
+          {/* Show crop/skip choice when preview exists but not yet cropped */}
+          {preview && selectedFile && !isCropped ? (
+            <div className="sa-crop-choice">
+              <button
+                className="sa-btn-crop"
+                onClick={() => setShowCropper(true)}
+                id="crop-image-btn"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M6.13 1L6 16a2 2 0 002 2h15" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M1 6.13L16 6a2 2 0 012 2v15" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                Crop Image
+                <span className="sa-btn-crop__tag">Recommended</span>
+              </button>
+              <button
+                className="sa-btn-skip-crop"
+                onClick={() => onContinue(selectedFile)}
+                id="skip-crop-btn"
+              >
+                Continue Without Cropping
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            </div>
+          ) : (
+            <button
+              className="sa-btn-continue"
+              disabled={!preview || !selectedFile}
+              onClick={() => onContinue(selectedFile)}
+              id="continue-to-analysis-btn"
+            >
+              Continue
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12h14M12 5l7 7-7 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          )}
         </div>
       </div>
+
+      {/* Cropper Modal */}
+      {showCropper && originalPreview && (
+        <ImageCropper
+          imageSrc={originalPreview}
+          onCropDone={handleCropDone}
+          onCancel={() => setShowCropper(false)}
+        />
+      )}
     </>
   );
 };

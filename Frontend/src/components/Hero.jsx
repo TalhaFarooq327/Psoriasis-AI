@@ -124,21 +124,25 @@ const Hero = () => {
       </div>
 
       <div className="container hero__container">
-        {/* ── Left: Text ── */}
-        <div className={`hero__content ${visible ? 'hero__content--visible' : ''}`}>
-
-
-          <h1 className="hero__title">
-            Detect <span className="text-gradient">Psoriasis</span>
+        {/* ── Title ── */}
+        <h1 className={`hero__title hero__content ${visible ? 'hero__content--visible' : ''}`}>
+            Detect <span className="text-gradient">Psoriasis</span>{' '}
             <br />Instantly with AI
-          </h1>
+        </h1>
 
-          <p className="hero__subtitle">
+        {/* ── Subtitle ── */}
+        <p className={`hero__subtitle hero__content ${visible ? 'hero__content--visible' : ''}`}>
             Upload a photo of your skin and get a clinical-grade analysis in under&nbsp;1&nbsp;minute.
             Powered by deep learning trained on 120K+ dermatology images.
-          </p>
+        </p>
 
-          <div className="hero__cta">
+        {/* ── Right: Skin Scan Visual ── */}
+        <div className={`hero__visual ${visible ? 'hero__visual--visible' : ''}`}>
+          <SkinVisual />
+        </div>
+
+        {/* ── CTA Buttons ── */}
+        <div className={`hero__cta hero__content ${visible ? 'hero__content--visible' : ''}`}>
             <Link to="/analyze" className="btn-primary hero__cta-btn" id="hero-try-now-btn">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path d="M5 3l14 9-14 9V3z" fill="white" />
@@ -155,12 +159,10 @@ const Hero = () => {
             >
               See How It Works
             </a>
-          </div>
+        </div>
 
-
-
-          {/* Mini stat row */}
-          <div className="hero__stats-row">
+        {/* Mini stat row */}
+        <div className={`hero__stats-row hero__content ${visible ? 'hero__content--visible' : ''}`}>
             <div className="hero__mini-stat">
               <div className="hero__mini-stat-num">120K+</div>
               <div className="hero__mini-stat-lbl">Predictions</div>
@@ -175,12 +177,6 @@ const Hero = () => {
               <div className="hero__mini-stat-num">4.9★</div>
               <div className="hero__mini-stat-lbl">User Rating</div>
             </div>
-          </div>
-        </div>
-
-        {/* ── Right: Skin Scan Visual ── */}
-        <div className={`hero__visual ${visible ? 'hero__visual--visible' : ''}`}>
-          <SkinVisual />
         </div>
       </div>
 

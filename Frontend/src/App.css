@@ -55,9 +55,11 @@ section[id] {
   margin-bottom: 8px;
 }
 
-.app-loading-logo svg {
-  width: 32px;
-  height: 32px;
+.app-loading-logo svg,
+.app-loading-logo img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
 }
 
 .app-loading-spinner {

@@ -1278,6 +1278,8 @@
   .sa-upload-card { padding: 24px 20px; }
   .sa-dropzone { padding: 40px 20px; }
   .sa-result-card, .sa-confidence-card { flex-direction: column; }
+  .sa-result-card, .sa-confidence-card, .sa-assessment-card { padding: 24px 20px; gap: 20px; }
+  .sa-disclaimer { padding: 16px; gap: 10px; }
   .sa-conf-ring-wrap { margin: 0 auto; }
   .sa-step__label { display: none; }
   .sa-step__line { width: 40px; }

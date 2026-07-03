@@ -4,12 +4,12 @@ import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
 
 const Navbar = () => {
-  const [scrolled, setScrolled]     = useState(false);
-  const [menuOpen, setMenuOpen]     = useState(false);
-  const [dropOpen, setDropOpen]     = useState(false);
-  const location  = useLocation();
-  const navigate  = useNavigate();
-  const dropRef   = useRef(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [dropOpen, setDropOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const dropRef = useRef(null);
   const { user, isAuthenticated, isDoctor, logout } = useAuth();
 
   const isLanding = location.pathname === '/';
@@ -42,10 +42,10 @@ const Navbar = () => {
   if (isDashboard) return null;
 
   const links = [
-    { label: 'Home',         href: '#home' },
+    { label: 'Home', href: '#home' },
     { label: 'How it Works', href: '#how-it-works' },
-    { label: 'About',        href: '#about' },
-    { label: 'FAQs',         href: '#faqs' },
+    { label: 'Contact', href: '#footer' },
+    { label: 'FAQs', href: '#faqs' },
   ];
 
   const handleNavClick = (href) => {
@@ -83,10 +83,7 @@ const Navbar = () => {
         {/* Logo → always goes to landing page */}
         <Link to="/" className="navbar__logo" id="navbar-logo">
           <div className="navbar__logo-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2L3 7V12C3 16.55 6.84 20.74 12 22C17.16 20.74 21 16.55 21 12V7L12 2Z" fill="white" fillOpacity="0.9"/>
-              <path d="M8 12H16M12 8V16" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
+            <img src="/logo.svg" alt="Psoriasis AI Logo" className="navbar__logo-img" />
           </div>
           <span className="navbar__logo-text">
             Psoriasis<span className="navbar__logo-accent">AI</span>
@@ -113,10 +110,10 @@ const Navbar = () => {
           <div className="navbar__profile-area" ref={dropRef}>
             <Link to={dashboardPath} className="navbar__dash-link" id="navbar-dashboard-link">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2"/>
-                <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2"/>
-                <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2"/>
-                <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2"/>
+                <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2" />
+                <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2" />
+                <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2" />
+                <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2" />
               </svg>
               Dashboard
             </Link>
@@ -130,7 +127,7 @@ const Navbar = () => {
               <div className="navbar__avatar">{initials}</div>
               <span className="navbar__profile-name">{user?.full_name || 'User'}</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" className={`navbar__chevron ${dropOpen ? 'navbar__chevron--open' : ''}`}>
-                <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
 
@@ -147,37 +144,37 @@ const Navbar = () => {
                 <div className="navbar__dropdown-divider" />
 
                 <Link to={dashboardPath} className="navbar__dropdown-item" onClick={() => setDropOpen(false)}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2" /><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2" /><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2" /><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" strokeWidth="2" /></svg>
                   Dashboard
                 </Link>
 
                 {isDoctor ? (
                   <>
                     <Link to="/doctor/patients" className="navbar__dropdown-item" onClick={() => setDropOpen(false)}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><circle cx="9" cy="7" r="4" stroke="currentColor" strokeWidth="2" /><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                       Patients
                     </Link>
                     <Link to="/doctor/pending-reviews" className="navbar__dropdown-item" onClick={() => setDropOpen(false)}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><polyline points="14 2 14 8 20 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><polyline points="14 2 14 8 20 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                       Pending Reviews
                     </Link>
                     <Link to="/doctor/profile" className="navbar__dropdown-item" onClick={() => setDropOpen(false)}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2"/></svg>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" /></svg>
                       Profile
                     </Link>
                   </>
                 ) : (
                   <>
                     <Link to="/dashboard/history" className="navbar__dropdown-item" onClick={() => setDropOpen(false)}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/><polyline points="12 6 12 12 16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" /><polyline points="12 6 12 12 16 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                       My Analyses
                     </Link>
                     <Link to="/dashboard/reviews" className="navbar__dropdown-item" onClick={() => setDropOpen(false)}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><polyline points="14 2 14 8 20 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><polyline points="14 2 14 8 20 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                       Doctor Reviews
                     </Link>
                     <Link to="/dashboard/profile" className="navbar__dropdown-item" onClick={() => setDropOpen(false)}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2"/></svg>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2" /></svg>
                       Profile
                     </Link>
                   </>
@@ -185,7 +182,7 @@ const Navbar = () => {
 
                 <div className="navbar__dropdown-divider" />
                 <button className="navbar__dropdown-item navbar__dropdown-item--danger" onClick={handleLogout}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   Logout
                 </button>
               </div>
@@ -193,7 +190,7 @@ const Navbar = () => {
           </div>
         ) : (
           <div className="navbar__auth">
-            <Link to="/login"    className="navbar__login"    id="navbar-login-btn">Login</Link>
+            <Link to="/login" className="navbar__login" id="navbar-login-btn">Login</Link>
             <Link to="/register" className="navbar__register" id="navbar-register-btn">Register</Link>
           </div>
         )}
@@ -229,7 +226,7 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Link to="/login"    className="navbar__login"    onClick={() => setMenuOpen(false)}>Login</Link>
+              <Link to="/login" className="navbar__login" onClick={() => setMenuOpen(false)}>Login</Link>
               <Link to="/register" className="navbar__register" onClick={() => setMenuOpen(false)}>Register</Link>
             </>
           )}

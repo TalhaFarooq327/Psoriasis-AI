@@ -285,4 +285,22 @@ button {
   .container {
     padding: 0 16px;
   }
+
+  /* Prevent header <br> tags from forcing awkward breaks on mobile */
+  .section-title br,
+  .hero__title br,
+  .auth-panel__title br,
+  .how__header br,
+  .ai-derm__header br,
+  .stats__header br,
+  .faqs__left br,
+  .early__content br {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .section-title {
+    font-size: clamp(22px, 5vw, 28px) !important;
+  }
 }

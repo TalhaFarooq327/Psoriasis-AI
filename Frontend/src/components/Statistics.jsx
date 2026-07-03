@@ -136,7 +136,7 @@ const Statistics = () => {
         <div className="stats__header">
 
           <h2 className="section-title" style={{ color: 'white' }}>
-            Numbers That<br />
+            Numbers That <br />
             <span style={{ background: 'linear-gradient(135deg, #63B3ED, #76E4F7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
               Speak for Themselves
             </span>

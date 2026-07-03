@@ -355,6 +355,52 @@
   }
 }
 
+@media (max-width: 600px) {
+  .udash {
+    gap: 20px;
+  }
+
+  .udash__welcome {
+    padding: 24px 16px;
+  }
+
+  .udash__section {
+    padding: 20px 14px;
+    border-radius: 12px;
+  }
+
+  .udash__section-header {
+    margin-bottom: 16px;
+  }
+
+  .udash__table th, .udash__table td {
+    padding: 12px 10px;
+    font-size: 13px;
+  }
+
+  .udash__conf-bar {
+    width: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .udash__consult-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .udash__consult-info {
+    width: 100%;
+  }
+
+  .udash__consult-card .udash__badge {
+    margin-left: 0;
+    align-self: flex-start;
+  }
+}
+
 @keyframes float {
   0%,100% { transform: translateY(0px); }
   50%     { transform: translateY(-8px); }

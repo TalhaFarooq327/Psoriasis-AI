@@ -264,6 +264,31 @@
 @media (max-width: 768px) {
   .ahist__filters { flex-direction: column; }
   .ahist__search { min-width: 100%; }
+  .ahist__filter-pills { flex-wrap: wrap; width: 100%; }
+  .ahist__pill { flex: 1; text-align: center; font-size: 12px; padding: 8px 10px; }
+}
+
+@media (max-width: 600px) {
+  .ahist__table-card { border-radius: 12px; }
+  .ahist__table th, .ahist__table td { padding: 12px 10px; font-size: 13px; }
+  .ahist__conf-bar { width: 60px; }
+  
+  /* Hide ID column to save space */
+  .ahist__table th:nth-child(1),
+  .ahist__table td:nth-child(1) {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .ahist-modal__content { padding: 20px 16px; width: 95%; }
+  .ahist-modal__title { font-size: 18px; }
+  .ahist-modal__grid { gap: 16px; }
+  
+  /* Hide confidence bar on small screens, keep percentage text */
+  .ahist__conf-bar {
+    display: none;
+  }
 }
 
 /* ── Premium Modal Overlays ── */

@@ -79,7 +79,7 @@ const DashboardLayout = ({ menuItems = [], title = 'Dashboard', children }) => {
     };
 
     loadNotifications();
-    
+
     // Poll every 30 seconds for live updates
     const interval = setInterval(loadNotifications, 30000);
     return () => clearInterval(interval);
@@ -127,10 +127,7 @@ const DashboardLayout = ({ menuItems = [], title = 'Dashboard', children }) => {
         <div className="dash-sidebar__header">
           <Link to="/" className="dash-sidebar__logo">
             <div className="dash-sidebar__logo-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2L3 7V12C3 16.55 6.84 20.74 12 22C17.16 20.74 21 16.55 21 12V7L12 2Z" fill="white" fillOpacity="0.9"/>
-                <path d="M8 12H16M12 8V16" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
+              <img src="/logo.svg" alt="Psoriasis AI Logo" className="dash-sidebar__logo-img" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
             </div>
             {!collapsed && (
               <span className="dash-sidebar__logo-text">
@@ -147,9 +144,9 @@ const DashboardLayout = ({ menuItems = [], title = 'Dashboard', children }) => {
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
               {collapsed ? (
-                <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               ) : (
-                <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               )}
             </svg>
           </button>
@@ -202,7 +199,7 @@ const DashboardLayout = ({ menuItems = [], title = 'Dashboard', children }) => {
           >
             <span className="dash-sidebar__link-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </span>
             {!collapsed && <span className="dash-sidebar__link-text">Logout</span>}
@@ -221,7 +218,7 @@ const DashboardLayout = ({ menuItems = [], title = 'Dashboard', children }) => {
             id="dash-mobile-menu-btn"
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
           </button>
 
@@ -236,7 +233,7 @@ const DashboardLayout = ({ menuItems = [], title = 'Dashboard', children }) => {
               onClick={() => setNotifOpen(!notifOpen)}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               {hasUnread && <span className="dash-topbar__notif-dot" />}
             </button>

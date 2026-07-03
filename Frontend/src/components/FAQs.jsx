@@ -78,7 +78,7 @@ const FAQs = () => {
           <div className={`faqs__left ${visible ? 'faqs__left--visible' : ''}`}>
 
             <h2 className="section-title">
-              Frequently Asked<br />
+              Frequently Asked <br />
               <span className="text-gradient">Questions</span>
             </h2>
             <p className="section-subtitle" style={{ marginBottom: 32 }}>

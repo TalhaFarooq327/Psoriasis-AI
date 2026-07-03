@@ -4,11 +4,11 @@
 
 /* ── Page Layout ── */
 .auth-page {
-  min-height: calc(100vh - 70px);
-  padding-top: 0;
+  min-height: 100vh;
+  padding-top: 72px; /* Clears sticky navbar */
   display: flex;
   font-family: 'Inter', system-ui, sans-serif;
-  overflow: hidden;
+  box-sizing: border-box;
 }
 
 /* ── Left Panel ── */
@@ -21,7 +21,7 @@
   justify-content: center;
   overflow: hidden;
   padding: 58px 40px;
-  min-height: calc(100vh - 70px);
+  min-height: calc(100vh - 72px);
 }
 
 .auth-panel__inner {
@@ -529,6 +529,7 @@
 
   .auth-panel--right {
     padding: 36px 24px;
+    overflow-y: visible; /* Let entire page scroll on mobile */
   }
 }
 

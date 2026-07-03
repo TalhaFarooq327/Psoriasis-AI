@@ -226,3 +226,7 @@
   .reviews__marquee-track { animation-duration: 25s; }
   .reviews__card { width: 260px; }
 }
+
+@media (max-width: 600px) {
+  .reviews__fade { width: 40px; }
+}

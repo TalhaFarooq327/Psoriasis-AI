@@ -20,15 +20,19 @@
 }
 
 .how__bg-circle--1 {
-  width: 600px; height: 600px;
+  width: 600px;
+  height: 600px;
   background: var(--primary);
-  top: -200px; right: -200px;
+  top: -200px;
+  right: -200px;
 }
 
 .how__bg-circle--2 {
-  width: 400px; height: 400px;
+  width: 400px;
+  height: 400px;
   background: var(--secondary);
-  bottom: -100px; left: -100px;
+  bottom: -100px;
+  left: -100px;
 }
 
 .how__header {
@@ -64,7 +68,8 @@
   position: absolute;
   top: 40px;
   right: -12px;
-  width: 24px; height: 2px;
+  width: 24px;
+  height: 2px;
   background: linear-gradient(90deg, var(--border), transparent);
   z-index: 1;
 }
@@ -76,7 +81,8 @@
 }
 
 .how__step-number {
-  width: 52px; height: 52px;
+  width: 52px;
+  height: 52px;
   border-radius: 14px;
   border: 2px solid;
   display: flex;
@@ -109,7 +115,8 @@
 }
 
 .how__step-icon {
-  width: 56px; height: 56px;
+  width: 56px;
+  height: 56px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -147,11 +154,31 @@
 }
 
 @media (max-width: 1024px) {
-  .how__steps { grid-template-columns: repeat(2, 1fr); gap: 32px; }
-  .how__connector { display: none; }
+  .how__steps {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+
+  .how__connector {
+    display: none;
+  }
 }
 
 @media (max-width: 600px) {
-  .how { padding: 72px 0; }
-  .how__steps { grid-template-columns: 1fr; gap: 24px; }
+  .how {
+    padding: 72px 0;
+  }
+
+  .how__steps {
+    grid-template-columns: 1fr;
+    gap: 92px;
+  }
+
+  .how__step-card {
+    padding: 24px 20px;
+  }
+
+  .how__header {
+    margin-bottom: 48px;
+  }
 }

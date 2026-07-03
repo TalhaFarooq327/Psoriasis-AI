@@ -7,7 +7,7 @@ const Footer = () => {
   const navLinks = [
     { label: 'Home', href: '#home' },
     { label: 'How it Works', href: '#how-it-works' },
-    { label: 'About', href: '#about' },
+    { label: 'Contact', href: '#footer' },
     { label: 'FAQs', href: '#faqs' },
   ];
 
@@ -24,7 +24,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="footer">
+    <footer className="footer" id="footer">
       <div className="footer__top">
         <div className="container">
           <div className="footer__grid">
@@ -32,10 +32,7 @@ const Footer = () => {
             <div className="footer__brand">
               <div className="footer__logo">
                 <div className="footer__logo-icon">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 2L3 7V12C3 16.55 6.84 20.74 12 22C17.16 20.74 21 16.55 21 12V7L12 2Z" fill="white" fillOpacity="0.9" />
-                    <path d="M8 12H16M12 8V16" stroke="white" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
+                  <img src="/logo.svg" alt="Psoriasis AI Logo" className="footer__logo-img" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
                 </div>
                 <span className="footer__logo-text">Psoriasis<span className="footer__logo-accent"> AI</span></span>
               </div>

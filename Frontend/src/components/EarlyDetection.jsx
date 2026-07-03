@@ -5,7 +5,6 @@ const points = [
   { icon: '🔬', text: 'Psoriasis affects over 125 million people worldwide and an estimated 5–7 million people in Pakistan, making early detection critical for effective treatment.' },
   { icon: '⚡', text: 'AI screening identifies early-stage skin changes that may be missed during routine visual inspection.' },
   { icon: '🏥', text: 'Earlier awareness leads to faster specialist referrals, reducing long-term skin damage.' },
-  { icon: '🧬', text: 'Our model analyzes micro-patterns invisible to the human eye, trained on clinical dermatology datasets.' },
 ];
 
 const EarlyDetection = () => {
@@ -67,7 +66,7 @@ const EarlyDetection = () => {
           <div className="early__content">
 
             <h2 className="section-title">
-              Early Detection Saves<br />
+              Early Detection Saves <br />
               <span className="text-gradient-green">Skin Health</span>
             </h2>
             <p className="section-subtitle" style={{ marginBottom: 32 }}>

@@ -87,7 +87,8 @@ const HowItWorks = () => {
         <div className="how__header">
 
           <h2 className="section-title">
-            How to Check Your Skin in<br />
+            How to Check Your Skin in{' '}
+            <br />
             <span className="text-gradient">4 Simple Steps</span>
           </h2>
           <p className="section-subtitle">

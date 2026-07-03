@@ -62,10 +62,7 @@ const ProtectedRoute = ({ children, requireRole }) => {
       <div className="app-loading-screen">
         <div className="app-loading-container animate-fade-up">
           <div className="app-loading-logo">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M12 2L3 7V12C3 16.55 6.84 20.74 12 22C17.16 20.74 21 16.55 21 12V7L12 2Z" fill="white" fillOpacity="0.9"/>
-              <path d="M8 12H16M12 8V16" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
+            <img src="/logo.svg" alt="Psoriasis AI Logo" />
           </div>
           <div className="app-loading-spinner"></div>
           <div className="app-loading-text">Verifying credentials...</div>
@@ -99,10 +96,7 @@ const DashboardRedirect = () => {
       <div className="app-loading-screen">
         <div className="app-loading-container animate-fade-up">
           <div className="app-loading-logo">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M12 2L3 7V12C3 16.55 6.84 20.74 12 22C17.16 20.74 21 16.55 21 12V7L12 2Z" fill="white" fillOpacity="0.9"/>
-              <path d="M8 12H16M12 8V16" stroke="white" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
+            <img src="/logo.svg" alt="Psoriasis AI Logo" />
           </div>
           <div className="app-loading-spinner"></div>
           <div className="app-loading-text">Routing to dashboard...</div>

@@ -84,9 +84,9 @@ const SkinVisual = () => {
         {/* Detection dots */}
         {dotsVisible && (
           <>
-            <ScanDot x={38} y={45} label="Psoriasis Patch" delay="0s" color="#f97316" />
+            <ScanDot x={50} y={46} label="Psoriasis Patch" delay="0s" color="#f97316" />
             <ScanDot x={62} y={30} label="Inflamed Area" delay="0.2s" color="#ef4444" />
-            <ScanDot x={55} y={65} label="Healthy Skin" delay="0.4s" color="#22c55e" />
+            <ScanDot x={65} y={65} label="Healthy Skin" delay="0.4s" color="#22c55e" />
           </>
         )}
 
@@ -126,14 +126,14 @@ const Hero = () => {
       <div className="container hero__container">
         {/* ── Title ── */}
         <h1 className={`hero__title hero__content ${visible ? 'hero__content--visible' : ''}`}>
-            Detect <span className="text-gradient">Psoriasis</span>{' '}
-            <br />Instantly with AI
+          Detect <span className="text-gradient">Psoriasis</span>{' '}
+          <br />Instantly with AI
         </h1>
 
         {/* ── Subtitle ── */}
         <p className={`hero__subtitle hero__content ${visible ? 'hero__content--visible' : ''}`}>
-            Upload a photo of your skin and get a clinical-grade analysis in under&nbsp;1&nbsp;minute.
-            Powered by deep learning trained on 120K+ dermatology images.
+          Upload a photo of your skin and get a clinical-grade analysis in under&nbsp;1&nbsp;minute.
+          Powered by deep learning trained on 120K+ dermatology images.
         </p>
 
         {/* ── Right: Skin Scan Visual ── */}
@@ -143,40 +143,40 @@ const Hero = () => {
 
         {/* ── CTA Buttons ── */}
         <div className={`hero__cta hero__content ${visible ? 'hero__content--visible' : ''}`}>
-            <Link to="/analyze" className="btn-primary hero__cta-btn" id="hero-try-now-btn">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M5 3l14 9-14 9V3z" fill="white" />
-              </svg>
-              Analyze My Skin — Free
-            </Link>
-            <a
-              href="#how-it-works"
-              className="btn-secondary hero__cta-learn"
-              onClick={(e) => {
-                e.preventDefault();
-                document.querySelector('#how-it-works')?.scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
-              See How It Works
-            </a>
+          <Link to="/analyze" className="btn-primary hero__cta-btn" id="hero-try-now-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M5 3l14 9-14 9V3z" fill="white" />
+            </svg>
+            Analyze My Skin — Free
+          </Link>
+          <a
+            href="#how-it-works"
+            className="btn-secondary hero__cta-learn"
+            onClick={(e) => {
+              e.preventDefault();
+              document.querySelector('#how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            See How It Works
+          </a>
         </div>
 
         {/* Mini stat row */}
         <div className={`hero__stats-row hero__content ${visible ? 'hero__content--visible' : ''}`}>
-            <div className="hero__mini-stat">
-              <div className="hero__mini-stat-num">120K+</div>
-              <div className="hero__mini-stat-lbl">Predictions</div>
-            </div>
-            <div className="hero__mini-stat-divider" />
-            <div className="hero__mini-stat">
-              <div className="hero__mini-stat-num">99%</div>
-              <div className="hero__mini-stat-lbl">Accuracy</div>
-            </div>
-            <div className="hero__mini-stat-divider" />
-            <div className="hero__mini-stat">
-              <div className="hero__mini-stat-num">4.9★</div>
-              <div className="hero__mini-stat-lbl">User Rating</div>
-            </div>
+          <div className="hero__mini-stat">
+            <div className="hero__mini-stat-num">120K+</div>
+            <div className="hero__mini-stat-lbl">Predictions</div>
+          </div>
+          <div className="hero__mini-stat-divider" />
+          <div className="hero__mini-stat">
+            <div className="hero__mini-stat-num">99%</div>
+            <div className="hero__mini-stat-lbl">Accuracy</div>
+          </div>
+          <div className="hero__mini-stat-divider" />
+          <div className="hero__mini-stat">
+            <div className="hero__mini-stat-num">4.9★</div>
+            <div className="hero__mini-stat-lbl">User Rating</div>
+          </div>
         </div>
       </div>
 

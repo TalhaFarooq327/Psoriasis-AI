@@ -32,7 +32,7 @@ const Footer = () => {
             <div className="footer__brand">
               <div className="footer__logo">
                 <div className="footer__logo-icon">
-                  <img src="/logo.svg" alt="Psoriasis AI Logo" className="footer__logo-img" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+                  <img src="/logo.svg" alt="Psoriasis AI Logo" className="footer__logo-img" style={{ width: '100px', height: 'auto', objectFit: 'contain' }} />
                 </div>
                 <span className="footer__logo-text">Psoriasis<span className="footer__logo-accent"> AI</span></span>
               </div>

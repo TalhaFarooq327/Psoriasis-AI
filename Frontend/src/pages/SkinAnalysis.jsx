@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 import ImageCropper from '../components/ImageCropper';
 import './SkinAnalysis.css';
@@ -452,6 +453,7 @@ const ProcessingStep = ({ file, onComplete }) => {
    ───────────────────────────────────── */
 const ResultsStep = ({ result, onReset }) => {
   const navigate = useNavigate();
+  const { isDoctor } = useAuth();
   const [animated, setAnimated] = useState(false);
   const [requestingReview, setRequestingReview] = useState(false);
   const [reviewSuccess, setReviewSuccess] = useState(false);
@@ -675,7 +677,7 @@ Please consult a licensed dermatologist for professional medical advice.
             Download Report
           </button>
 
-          {detected && (
+          {detected && !isDoctor && (
             <button
               className="sa-btn-outline"
               disabled={requestingReview || reviewSuccess || result.status === 'pending_review' || result.status === 'reviewed'}

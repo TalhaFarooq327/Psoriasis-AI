@@ -9,7 +9,6 @@ venv/
 env/
 
 # Models
-*.keras
 *.h5
 
 # Environment variables (IMPORTANT)
@@ -24,3 +23,4 @@ env/
 Thumbs.db
 
 PROJECT_SUMMARY.md
+git-lfs-temp/

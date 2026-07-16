@@ -1,0 +1,13 @@
+.venv/
+.venv-mac/
+venv/
+env/
+__pycache__/
+*.pyc
+.env
+*.env
+.git
+.gitignore
+.DS_Store
+Dockerfile
+.dockerignore

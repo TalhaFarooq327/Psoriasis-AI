@@ -82,9 +82,9 @@ const Navbar = () => {
 
         {/* Logo → always goes to landing page */}
         <Link to="/" className="navbar__logo" id="navbar-logo">
-          <div className="navbar__logo-icon">
-            <img src="/logo.svg" alt="Psoriasis AI Logo" className="navbar__logo-img" />
-          </div>
+          
+            <img src="/logo.png" alt="Psoriasis AI Logo" className="navbar__logo-img" />
+          
           <span className="navbar__logo-text">
             Psoriasis<span className="navbar__logo-accent">AI</span>
           </span>

@@ -31,9 +31,9 @@ const Footer = () => {
             {/* Brand */}
             <div className="footer__brand">
               <div className="footer__logo">
-                <div className="footer__logo-icon">
-                  <img src="/logo.svg" alt="Psoriasis AI Logo" className="footer__logo-img" style={{ width: '100px', height: 'auto', objectFit: 'contain' }} />
-                </div>
+                
+                  <img src="/logo.png" alt="Psoriasis AI Logo" className="footer__logo-img" style={{ width: '50px', height: 'auto', objectFit: 'contain' }} />
+                
                 <span className="footer__logo-text">Psoriasis<span className="footer__logo-accent"> AI</span></span>
               </div>
               <p className="footer__brand-desc">

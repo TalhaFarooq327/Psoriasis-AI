@@ -62,6 +62,17 @@ async def lifespan(app: FastAPI):
         print("TensorFlow is not installed. Skipping model load.")
     else:
         try:
+            if not MODEL_PATH.exists():
+                model_url = os.getenv("MODEL_DOWNLOAD_URL")
+                if model_url:
+                    print(f"Model file not found at {MODEL_PATH}. Downloading from {model_url}...")
+                    import urllib.request
+                    MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
+                    temp_path = MODEL_PATH.with_suffix(".tmp")
+                    urllib.request.urlretrieve(model_url, str(temp_path))
+                    temp_path.rename(MODEL_PATH)
+                    print("Model downloaded successfully!")
+
             if MODEL_PATH.exists():
                 model = tf.keras.models.load_model(str(MODEL_PATH))
                 print("TensorFlow model loaded successfully")
@@ -80,7 +91,12 @@ app = FastAPI(title="Psoriasis AI API", lifespan=lifespan)
 # Enable CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Allow local Vite client requests. Can restrict in production.
+    allow_origins=[
+        "https://psoriasisai.netlify.app",
+        "https://psoriasisai.netlify.app/",
+        "http://localhost:5173",
+        "http://localhost:3000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

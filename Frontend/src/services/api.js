@@ -1,6 +1,6 @@
 import { supabase } from './supabaseClient';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://zohaibandsaeed-backendpsoriasisai.hf.space';
 
 async function getAuthHeaders() {
   const { data: { session } } = await supabase.auth.getSession();

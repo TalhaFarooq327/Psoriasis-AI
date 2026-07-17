@@ -16,11 +16,30 @@ const Navbar = () => {
   const isDashboard = location.pathname.startsWith('/dashboard') || location.pathname.startsWith('/doctor');
   const isAnalyze = location.pathname === '/analyze';
 
-  /* Scroll listener */
+  /* Scroll listener — throttled with rAF + passive flag for zero jank on mobile */
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    let rafId = null;
+    let lastScrolled = false;
+
+    const handleScroll = () => {
+      if (rafId) return; // Skip if a frame is already scheduled
+      rafId = requestAnimationFrame(() => {
+        const nowScrolled = window.scrollY > 20;
+        if (nowScrolled !== lastScrolled) {
+          lastScrolled = nowScrolled;
+          setScrolled(nowScrolled);
+        }
+        rafId = null;
+      });
+    };
+
+    // passive: true tells the browser this handler won't call preventDefault()
+    // so it can scroll immediately without waiting for JS to finish
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll, { passive: true });
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   /* Close mobile menu on route change */
@@ -201,6 +220,7 @@ const Navbar = () => {
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
           id="navbar-hamburger"
+          style={{ touchAction: 'manipulation' }}
         >
           <span></span><span></span><span></span>
         </button>

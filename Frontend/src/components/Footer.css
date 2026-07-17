@@ -19,7 +19,7 @@
 .footer__logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 3px;
   margin-bottom: 18px;
 }
 
@@ -218,6 +218,7 @@ a.footer__contact-item:hover {
 .footer__logo-img {
   border-radius: 8px;
 }
+
 /* Responsive */
 @media (max-width: 1000px) {
   .footer__grid {

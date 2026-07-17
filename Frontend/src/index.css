@@ -291,7 +291,6 @@ button {
 
   /* Prevent header <br> tags from forcing awkward breaks on mobile */
   .section-title br,
-  .hero__title br,
   .auth-panel__title br,
   .how__header br,
   .ai-derm__header br,

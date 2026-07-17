@@ -156,7 +156,7 @@ const Hero = () => {
         {/* ── Title ── */}
         <h1 className={`hero__title hero__content ${visible ? 'hero__content--visible' : ''}`}>
           Detect <span className="text-gradient">Psoriasis</span>{' '}
-          <br />Instantly with AI
+          <br /> Instantly with AI
         </h1>
 
         {/* ── Subtitle ── */}

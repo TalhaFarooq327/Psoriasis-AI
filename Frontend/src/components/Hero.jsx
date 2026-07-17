@@ -111,7 +111,36 @@ const SkinVisual = () => {
 
 const Hero = () => {
   const [visible, setVisible] = useState(false);
-  useEffect(() => { setTimeout(() => setVisible(true), 100); }, []);
+  const [noiseStyle, setNoiseStyle] = useState({});
+
+  useEffect(() => {
+    setTimeout(() => setVisible(true), 100);
+
+    // Generate a 128x128 noise pattern once to replace the expensive SVG feTurbulence
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = 128;
+      canvas.height = 128;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        const imgData = ctx.createImageData(128, 128);
+        const data = imgData.data;
+        for (let i = 0; i < data.length; i += 4) {
+          const val = Math.floor(Math.random() * 255);
+          data[i] = val;
+          data[i + 1] = val;
+          data[i + 2] = val;
+          data[i + 3] = 255; // Fully opaque, opacity controlled via CSS
+        }
+        ctx.putImageData(imgData, 0, 0);
+        setNoiseStyle({
+          backgroundImage: `url(${canvas.toDataURL()})`,
+        });
+      }
+    } catch (e) {
+      console.error('Failed to generate noise texture', e);
+    }
+  }, []);
 
   return (
     <section className="hero" id="home">
@@ -120,7 +149,7 @@ const Hero = () => {
         <div className="hero__blob hero__blob--2" />
         <div className="hero__blob hero__blob--3" />
         <div className="hero__grid" />
-        <div className="hero__noise" />
+        <div className="hero__noise" style={noiseStyle} />
       </div>
 
       <div className="container hero__container">

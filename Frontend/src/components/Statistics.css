@@ -11,6 +11,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  overflow: hidden; /* Clip 700px glow — prevents mobile horizontal scroll */
 }
 
 .stats__bg-grid {

@@ -13,6 +13,7 @@
   inset: 0;
   pointer-events: none;
   z-index: 0;
+  overflow: hidden; /* Clip 800px blob — prevents mobile horizontal scroll */
 }
 
 .reviews__bg-blob {

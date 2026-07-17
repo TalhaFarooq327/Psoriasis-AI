@@ -41,6 +41,9 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  overflow-x: hidden;
+  /* Prevent any child element from causing horizontal scroll */
+  max-width: 100%;
 }
 
 body {

@@ -3,11 +3,12 @@
 .faqs {
   padding: 100px 0;
   background: var(--bg-light);
+  overflow: hidden;
 }
 
 .faqs__inner {
   display: grid;
-  grid-template-columns: 380px 1fr;
+  grid-template-columns: min(380px, 100%) 1fr;
   gap: 80px;
   align-items: start;
 }

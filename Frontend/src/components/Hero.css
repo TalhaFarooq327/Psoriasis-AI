@@ -16,13 +16,14 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  overflow: hidden; /* Contain large blobs — prevents horizontal overflow on mobile */
 }
 
 .hero__noise {
   position: absolute;
   inset: 0;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.018;
+  pointer-events: none;
 }
 
 .hero__grid {
@@ -40,6 +41,9 @@
   border-radius: 50%;
   filter: blur(90px);
   animation: blob 10s ease-in-out infinite;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 .hero__blob--1 {
@@ -263,6 +267,8 @@
     0 0 60px rgba(11, 197, 234, 0.08);
   aspect-ratio: 4/3;
   animation: float 6s ease-in-out infinite;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
 }
 
 .skin-visual__img {
@@ -538,6 +544,8 @@
   transition: opacity 0.6s ease, transform 0.6s ease;
   z-index: 20;
   animation: float 5s ease-in-out infinite;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
 }
 
 .analysis-card:nth-child(2) {
@@ -599,6 +607,8 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   animation: float 5s ease-in-out infinite;
   animation-delay: -1s;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
 }
 
 .confidence-badge__label {

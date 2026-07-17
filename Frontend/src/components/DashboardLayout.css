@@ -9,6 +9,7 @@
   background: linear-gradient(135deg, #0a0e1a 0%, #0d1b35 50%, #0a1628 100%);
   font-family: 'Inter', system-ui, sans-serif;
   position: relative;
+  overflow-x: hidden; /* Prevent horizontal scroll on mobile */
 }
 
 .dash-layout::before {

@@ -126,9 +126,9 @@ const DashboardLayout = ({ menuItems = [], title = 'Dashboard', children }) => {
         {/* Sidebar header */}
         <div className="dash-sidebar__header">
           <Link to="/" className="dash-sidebar__logo">
-            <div className="dash-sidebar__logo-icon">
+          
               <img src="/logo.png" alt="Psoriasis AI Logo" className="dash-sidebar__logo-img" style={{ width: '100px', height: 'auto', objectFit: 'contain' }} />
-            </div>
+            
             {!collapsed && (
               <span className="dash-sidebar__logo-text">
                 Psoriasis<span className="dash-sidebar__logo-accent">AI</span>

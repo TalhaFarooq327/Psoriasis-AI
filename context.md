@@ -83,7 +83,7 @@ Psoriasis AI/
 │       ├── requirements.txt
 │       ├── Dockerfile
 │       └── model/
-│           └── resnet50_final_model.keras   # ML model (tracked via Git LFS)
+│           └── BNresnet_final_model.keras   # ML model (tracked via Git LFS)
 │
 ├── .github/
 │   └── workflows/
@@ -104,8 +104,8 @@ Psoriasis AI/
 | Database | Supabase (PostgreSQL via SQLAlchemy ORM on backend) |
 | Storage | Supabase Storage bucket `skin-images` |
 | Backend framework | FastAPI (Python) |
-| ML model | TensorFlow / Keras — ResNet50 fine-tuned, binary classifier |
-| Image processing | Pillow + NumPy — resized to 224×224, ResNet50 preprocessing |
+| ML model | TensorFlow / Keras — BNresnet fine-tuned, binary classifier |
+| Image processing | Pillow + NumPy — resized to 224×224, BNresnet preprocessing |
 | Styling | Vanilla CSS (no Tailwind) — CSS custom properties in `index.css` |
 | Fonts | Inter (body) + Plus Jakarta Sans (headings) via Google Fonts |
 | Deployment (Frontend) | Netlify |
@@ -159,7 +159,7 @@ All endpoints require `Authorization: Bearer <supabase_access_token>`
 
 | Method | Endpoint | Auth | Description |
 |---|---|---|---|
-| `POST` | `/predict` | Patient | Upload image → ResNet50 → Supabase Storage + DB → return result |
+| `POST` | `/predict` | Patient | Upload image → BNresnet → Supabase Storage + DB → return result |
 | `GET` | `/analyses` | Patient | Full history for current user |
 | `GET` | `/analyses/{id}` | Patient or Doctor | Single analysis + reviews |
 | `POST` | `/analyses/{id}/request-review` | Patient | Set status → `pending_review` |
@@ -186,11 +186,11 @@ All endpoints require `Authorization: Bearer <supabase_access_token>`
 
 ## 8. ML Model
 
-- **Architecture**: ResNet50 fine-tuned, binary output (sigmoid)
+- **Architecture**: BNresnet fine-tuned, binary output (sigmoid)
 - **Classes**: `["normal skin", "psoriasis"]` — index 0 = normal, index 1 = psoriasis
 - **Threshold**: score ≥ 0.5 → psoriasis
 - **Confidence**: `score` if psoriasis, `1 - score` if normal
-- **File**: `model/resnet50_final_model.keras` (Git LFS tracked)
+- **File**: `model/BNresnet_final_model.keras` (Git LFS tracked)
 - **Startup**: Loaded from disk; downloads from `MODEL_DOWNLOAD_URL` env var if not present
 
 ---

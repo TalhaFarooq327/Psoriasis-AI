@@ -22,7 +22,7 @@ load_dotenv(override=True)
 
 # Setup paths
 BASE_DIR = Path(__file__).resolve().parent
-MODEL_PATH = BASE_DIR / "model" / "resnet50_final_model.keras"
+MODEL_PATH = BASE_DIR / "model" / "BNresnet_final_model.keras"
 
 # Supabase Client Setup (for file storage)
 SUPABASE_URL = os.getenv("SUPABASE_URL")
@@ -110,7 +110,7 @@ def preprocess_image(image_bytes):
             img_array = np.asarray(img, dtype=np.float32)
 
             if tf is not None:
-                img_array = tf.keras.applications.resnet50.preprocess_input(img_array)
+                img_array = tf.keras.applications.BNresnet.preprocess_input(img_array)
             else:
                 img_array = img_array / 255.0
 

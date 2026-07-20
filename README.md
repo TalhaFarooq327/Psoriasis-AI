@@ -15,7 +15,7 @@ A secure, multi-role web application designed to classify skin psoriasis using a
 
 * **Frontend**: React 19 + Vite 8 + React Router v7 + Vanilla CSS
 * **Backend**: FastAPI (Python 3.12) + SQLAlchemy ORM + python-jose (JWT)
-* **AI Model**: TensorFlow ResNet50 Classifier (`.keras` format)
+* **AI Model**: TensorFlow BNresnet Classifier (`.keras` format)
 * **Infrastructure**: Supabase (Auth, PostgreSQL Database, Object Storage)
 
 ---
